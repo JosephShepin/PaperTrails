@@ -95,10 +95,15 @@ export default {
 
 <style lang="sass" scoped>
 .container
+  position: absolute
+  left: 50%
+  transform: translateX(-50%)
   display: flex
   flex-direction: column
   max-width: 950px !important
   align-items: center
+  justify-content: center
+
   
 .shadow
   margin: 10px
