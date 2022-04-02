@@ -1,9 +1,12 @@
 from flask import Flask
 from flask_cors import CORS
-
+import configenv
+import os
 #cors
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
+
+FEC_API_KEY = os.getenv("FEC_API_KEY"),
 
 @app.route('/')
 def main():
