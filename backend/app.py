@@ -11,7 +11,9 @@ FEC_API_KEY = os.getenv("FEC_API_KEY"),
 @app.route('/candidate-data', methods=['POST', 'GET'])
 def main():
     candidateID = request.headers.get('candidateid') # the id of the selected candidate
+    year = request.headers.get('year') # the year wanted of the selected candidate
     print('the given candidateID is:', candidateID)
+    print('the given year is:', year)
     
     candidateData = request.json # all of the data for the candidate
     print('all json data is ', candidateData)
