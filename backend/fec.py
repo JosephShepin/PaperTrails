@@ -1,5 +1,8 @@
 import requests
 import re
+import os
+
+FEC_API_KEY = os.getenv("FEC_API_KEY")
 
 def requestFEC(cat, params):
     url = 'https://api.open.fec.gov/v1/'
@@ -9,7 +12,7 @@ def requestFEC(cat, params):
     return requests.get(url + cat + '?api_key=' + FEC_API_KEY + params_string)
 
 def getCommittee(candidate_data, cycle):
-  committees = candidate_data['results'][0]['principal_committees']
+  committees = candidate_data['principal_committees']
   for c in committees:
     for y in c['cycles']:
       if y==cycle:
