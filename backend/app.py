@@ -2,6 +2,9 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import configenv
 import os
+
+import fec
+
 #cors
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
@@ -12,14 +15,11 @@ FEC_API_KEY = os.getenv("FEC_API_KEY"),
 def main():
     candidateID = request.headers.get('candidateid') # the id of the selected candidate
     year = request.headers.get('year') # the year wanted of the selected candidate
-    print('the given candidateID is:', candidateID)
-    print('the given year is:', year)
     
     candidateData = request.json # all of the data for the candidate
-    print('all json data is ', candidateData)
-
+    data = fec.fetchAllData(candidateData, year)
     # formulate a response
-    response = jsonify({'jsondata': 'here'})
+    response = jsonify(data)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
