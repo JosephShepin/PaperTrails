@@ -1,18 +1,34 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div class="container shadow p-3 mb-5 bg-white rounded">
+      <h1>Welcome to Lorem Ipsum</h1>
+      <br>
+      <input class="form-control address-input" placeholder="Enter Address">
+      <br>
+      <button class="btn btn-primary">Continue</button>
+    </div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+// import HelloWorld from '@/components/HelloWorld.vue'
 
 export default {
   name: 'Home',
   components: {
-    HelloWorld
   }
 }
 </script>
+
+<style lang="sass" scoped>
+.container
+  display: flex
+  flex-direction: column
+  align-items: center
+  max-width: 750px !important
+
+.address-input
+  width: 100%
+  max-width: 600px
+  text-align: center
+</style>
