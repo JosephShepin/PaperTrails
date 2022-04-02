@@ -19,8 +19,8 @@
             <p class="party" :class="{ 'dem': candidate.party_full.toLowerCase().includes('democrat'),  'rep': candidate.party_full.toLowerCase().includes('republican')}">{{ candidate.party_full }}</p>
           </div>
           <p class="years">Years Ran: {{candidate.election_years.join(', ') }}</p>
-          <p class="state">Location: {{ candidate.state }}</p>
-          <p class="state">Location: {{ candidate.office_full }}</p>
+          <p class="state">{{ candidate.state == 'US' ? '': 'State: ' + candidate.state }}</p>
+          <p class="state">Office: {{ candidate.office_full }}</p>
         </div>
       </div>
     </div>
