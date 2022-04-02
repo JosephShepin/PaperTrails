@@ -10,17 +10,22 @@
     </div>
     <!-- candidate select -->
     <div v-show="step == 2" class="shadow p-3 mb-5 bg-white rounded">
-      <h1>Select Candidate</h1>
+      <h1>Select Candidate And Year</h1>
       <hr>
       <div class="candidates">
-        <div v-for="candidate in candidateResults" @click="selectCandidate(candidate)" :key="candidate" class="candidate">
+        <div v-for="candidate in candidateResults" :key="candidate" class="candidate">
           <p class="name">{{ candidate.name }}</p>
           <div class="party-container">
             <p class="party" :class="{ 'dem': candidate.party_full.toLowerCase().includes('democrat'),  'rep': candidate.party_full.toLowerCase().includes('republican')}">{{ candidate.party_full }}</p>
           </div>
-          <p class="years">Years Ran: {{candidate.election_years.join(', ') }}</p>
           <p class="state">{{ candidate.state == 'US' ? '': 'State: ' + candidate.state }}</p>
           <p class="state">Office: {{ candidate.office_full }}</p>
+          <div class="years-row">
+          <div class="year" @click="selectCandidate(candidate, year)" v-for="year in candidate.election_years" :key="year">
+              {{ year }}
+          </div>
+          </div>
+          
         </div>
       </div>
     </div>
@@ -85,13 +90,14 @@ export default {
     }
   },
   methods: {
-    async selectCandidate(candidate){
+    async selectCandidate(candidate, year){
       console.log(process.env.VUE_APP_SERVER_URL)
       const result = await fetch(`${process.env.VUE_APP_SERVER_URL}/candidate-data`,{
         method: 'POST', 
         headers: {
           'Content-Type': 'application/json',
           'candidateid': candidate.candidate_id,
+          'year': year,
         },
         body: JSON.stringify(candidate)
       })
@@ -155,7 +161,18 @@ export default {
         color: #CB4335
       .party
         margin-top: -15px
+    .years-row
+      display: flex
+      gap: 8px
+      margin-top: -5px
+      .year
+        transition: .1s all ease-in-out
+        padding: 2px 4px
+        border-radius: 3px
+        &:hover
+          background: #D6DBDF
     .years
+      font-size: 20px
       margin-top: -10px
     .state
       margin-top: -10px
