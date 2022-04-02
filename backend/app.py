@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import configenv
 import os
@@ -8,11 +8,18 @@ cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 FEC_API_KEY = os.getenv("FEC_API_KEY"),
 
-@app.route('/')
+@app.route('/candidate-data', methods=['POST', 'GET'])
 def main():
-    return {
-        'data': 'here'
-    }
+    candidateID = request.headers.get('candidateid') # the id of the selected candidate
+    print('the given candidateID is:', candidateID)
+    
+    candidateData = request.json # all of the data for the candidate
+    print('all json data is ', candidateData)
+
+    # formulate a response
+    response = jsonify({'jsondata': 'here'})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 # run the application
 if __name__ == '__main__':

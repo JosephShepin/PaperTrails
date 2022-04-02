@@ -24,6 +24,14 @@
         </div>
       </div>
     </div>
+    <!-- candidate results -->
+    <div v-show="step == 3" class="shadow p-3 mb-5 bg-white rounded">
+      <h1>Candidate Results</h1>
+      <hr>
+      <div class="dashboard">
+        
+      </div>
+    </div>
   </div>
 </template>
 
@@ -77,8 +85,21 @@ export default {
     }
   },
   methods: {
-    selectCandidate(candidate){
-      console.log(candidate.candidate_id)
+    async selectCandidate(candidate){
+      console.log(process.env.VUE_APP_SERVER_URL)
+      const result = await fetch(`${process.env.VUE_APP_SERVER_URL}/candidate-data`,{
+        method: 'POST', 
+        headers: {
+          'Content-Type': 'application/json',
+          'candidateid': candidate.candidate_id,
+        },
+        body: JSON.stringify(candidate)
+      })
+      if (result.status == 200){
+        const response = await result.json()
+        console.log(response)
+      }
+      this.step+=1
     },
 
     async searchCandidates() {
