@@ -128,6 +128,21 @@
           </div>
           <p></p>
         </div>
+
+                <div
+          v-if="donors.financials != null"
+          class="shadow p-3 mb-2 bg-white rounded" style="margin: 0"
+        >
+          <p class="amount" style="color: green">
+            ${{ addCommas(donors.financials["Total Funds Raised"]) }}
+          </p>
+          <p class="tag">Funds Raised</p>
+          <p class="amount" style="color: red">
+            ${{ addCommas(donors.financials["Total Expenditures"]) }}
+          </p>
+          <p class="tag" style="margin-bottom: -5px">Total Expenditure</p>
+        </div>
+
         <div class="shadow p-3 mb-5 bg-white rounded" style="margin: 0">
           <Bar
             :chart-options="chartOptions"
@@ -142,24 +157,11 @@
       </div>
       <div class="main-col" style="flex: 1">
         <div
-          style="margin-top: 5px"
+          style="margin-top: 5px; display: flex; flex-direction: column; align-items: center;"
           class="shadow p-3 mb-5 bg-white rounded">
           <div v-html="svgMap"></div>
             <h2 style="margin-bottom:-5px; text-align: center;">Campaign Donations By State</h2>
           </div>
-        <div
-          v-if="donors.financials != null"
-          class="shadow p-3 mb-5 bg-white rounded"
-        >
-          <p class="amount" style="color: green">
-            ${{ addCommas(donors.financials["Total Funds Raised"]) }}
-          </p>
-          <p class="tag">Funds Raised</p>
-          <p class="amount" style="color: red">
-            ${{ addCommas(donors.financials["Total Expenditures"]) }}
-          </p>
-          <p class="tag" style="margin-bottom: -5px">Total Expenditure</p>
-        </div>
         <div
           class="shadow p-3 mb-5 bg-white rounded"
         >
