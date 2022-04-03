@@ -6,9 +6,9 @@
       :class="{ center: step == 1 }"
       style="margin-top: 0px; border-radius: 10px !important"
       class="container shadow p-3 mb-5 bg-white rounded"
-      :style="{ border: focused ? '1px solid #808B96' : 'none' }"
+      :style="{ border: focused ? '1px solid #28B463' : 'none' }"
     >
-      <h1>Welcome to Lorem Ipsum</h1>
+      <h1>Welcome to <span style="color: #28B463">Paper Trails</span></h1>
       <br />
       <input
         @focus="focused = true"
@@ -19,7 +19,8 @@
       <br />
       <button
         :disabled="inputName.length <= 5"
-        class="btn btn-primary"
+        class="btn btn-success"
+        style="background-color: #28B463" 
         @click="searchCandidates()"
       >
         Search Candidates

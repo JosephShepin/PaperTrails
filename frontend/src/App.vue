@@ -2,7 +2,7 @@
   <div>
     <!-- <div id="nav"> -->
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#" style="margin-left: 15px">Lorem Ipsum</a>
+        <a class="navbar-brand" href="#" style="margin-left: 15px">Paper Trails</a>
         <div class="" id="navbarSupportedContent">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item">
