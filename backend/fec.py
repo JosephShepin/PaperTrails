@@ -21,7 +21,7 @@ def getCommittee(candidate_data, cycle):
 
 def fetchDonors(committee_id, cycle):
     r = requestFEC('schedules/schedule_a/by_employer/', {'sort':'-total', 'committee_id':committee_id, 'cycle':str(cycle), 'per_page':'100'})
-    companies = {}
+    companies = []
 
     individuals = {'Unemployed':0, 'Self Employed':0, 'Retired':0, 'Miscellaneous':0}
     unemployed_re = re.compile('unemployed|not employed')
@@ -43,7 +43,7 @@ def fetchDonors(committee_id, cycle):
         elif retired_re.search(donor_str):
             individuals['Retired'] += donor['total']
         else:
-            companies[donor_str.title()] = donor['total']
+            companies.append(donor_str.title(), donor['total'])
 
     for k,v in individuals.items():
         individuals[k] = round(v, 2)
