@@ -71,22 +71,41 @@
       <hr />
       <div class="dashboard">
         <div class="btn btn-primary" @click="getNews()">Get News</div>
+        <div class="info-container">
+          <h4 style="margin-top: 20px; margin-bottom: -10px;">General Information</h4>
+          <hr>
+          <br>
+          <p><b>Name: </b> {{ selectedCandidate.name }}</p>
+          <p><b>{{ selectedCandidate.state == "US" ? "" : "State: " + selectedCandidate.state }}</b></p>
+          <p><b>Party: </b>{{ selectedCandidate.party }}</p>
+          <p><b>Incumbent/Challenger:</b> {{ selectedCandidate.incumbent_challenge_full }}</p>
+          <p><b>Office:</b> {{ selectedCandidate.office_full }}</p>
+          <p><b>Political Activism Through:</b> {{ selectedCandidate.active_through }}</p>
+          <p></p>
+        </div>
+        <br>
         <!-- donors -->
         <div class="bar-charts-container">
+          <h4>Financial Donors</h4>
+          <hr>
           <div class="bar-charts">
-            <Bar
-              class="shadow-sm p-3 mb-5 bg-white rounded"
-              style="width: 100%; height: 400px; flex: 1"
-              :chart-options="chartOptions"
-              :chart-data="donorChartData"
-              chart-id="companies-chart"
-              dataset-id-key="label"
-              width="400"
-              height="200"
-            />
-            <div class="" style="flex: 1">
+            <div class="chart"  style="flex: 1">
+              <p style="text-align: center; font-size: 20px; margin-bottom: -10px">Top Corporate Donors</p>
+              <Bar
+                class="shadow-sm p-3 mb-5 bg-white rounded"
+                style="width: 100%; height: 400px;"
+                :chart-options="chartOptions"
+                :chart-data="donorChartData"
+                chart-id="companies-chart"
+                dataset-id-key="label"
+                width="400"
+                height="200"
+              />
+            </div>
+            <div class="chart" style="flex: 1">
               <p>hello world</p>
             </div>
+
           </div>
         </div>
 
@@ -262,7 +281,9 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-
+.info-container
+  p
+    margin-top: -10px
 .bar-charts
   display: flex
   max-width: 1500px
