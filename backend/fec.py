@@ -43,7 +43,7 @@ def fetchDonors(committee_id, cycle):
         elif retired_re.search(donor_str):
             individuals['Retired'] += donor['total']
         else:
-            companies.append(donor_str.title(), donor['total'])
+            companies.append([donor_str.title(), donor['total']])
 
     for k,v in individuals.items():
         individuals[k] = round(v, 2)
