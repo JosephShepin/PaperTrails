@@ -62,37 +62,69 @@
       </div>
     </div>
     <!-- candidate results -->
-    <div v-show="step == 3" class="shadow p-3 mb-5 bg-white rounded">
+    <div
+      v-show="step == 3"
+      class="shadow p-3 mb-5 bg-white rounded"
+      style="max-width: 2000px"
+    >
       <h1>Candidate Information</h1>
       <hr />
       <div class="dashboard">
         <div class="btn btn-primary" @click="getNews()">Get News</div>
+        <div class="info-container">
+          <h4 style="margin-top: 20px; margin-bottom: -10px;">General Information</h4>
+          <hr>
+          <br>
+          <p><b>Name: </b> {{ selectedCandidate.name }}</p>
+          <p><b>{{ selectedCandidate.state == "US" ? "" : "State: " + selectedCandidate.state }}</b></p>
+          <p><b>Party: </b>{{ selectedCandidate.party }}</p>
+          <p><b>Incumbent/Challenger:</b> {{ selectedCandidate.incumbent_challenge_full }}</p>
+          <p><b>Office:</b> {{ selectedCandidate.office_full }}</p>
+          <p><b>Political Activism Through:</b> {{ selectedCandidate.active_through }}</p>
+          <p></p>
+        </div>
+        <br>
         <!-- donors -->
-        <!-- {{ donors }} -->
-        <!-- <div class="donor" v-for="(key, value) in donors" :key="key"> -->
-        <!-- <p>${{ key.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} {{ value }}</p> -->
-
         <div class="bar-charts-container">
+          <h4>Financial Donors</h4>
+          <hr>
           <div class="bar-charts">
-            <Bar
-              class="shadow-sm p-3 mb-5 bg-white rounded"
-              style="width: 100%; height: 400px; flex: 1"
-              :chart-options="chartOptions"
-              :chart-data="donorChartData"
-              chart-id="companies-chart"
-              dataset-id-key="label"
-              width="400"
-              height="200"
-            />
-            <div class="" style="flex: 1">
+            <div class="chart"  style="flex: 1">
+              <p style="text-align: center; font-size: 20px; margin-bottom: -10px">Top Corporate Donors</p>
+              <Bar
+                class="shadow-sm p-3 mb-5 bg-white rounded"
+                style="width: 100%; height: 400px;"
+                :chart-options="chartOptions"
+                :chart-data="donorChartData"
+                chart-id="companies-chart"
+                dataset-id-key="label"
+                width="400"
+                height="200"
+              />
+            </div>
+            <div class="chart" style="flex: 1">
               <p>hello world</p>
             </div>
+
           </div>
         </div>
 
         <!-- articles -->
-        <h2 style="font-size: 25px; margin-bottom: -10px">Related Articles</h2>
-        <hr />
+        <div
+          style="
+            display: flex;
+            justify-content: center;
+            position: relative;
+            left: -10px;
+          "
+        >
+          <div style="max-width: 980px; width: 100%; text-align: center">
+            <h2 style="font-size: 25px; margin-bottom: -10px">
+              Related Articles
+            </h2>
+            <hr />
+          </div>
+        </div>
         <div
           class="articles-container"
           style="display: flex; justify-content: center"
@@ -102,12 +134,13 @@
               v-for="article in newsResults"
               :key="article"
               class="article"
-              @click="window.open(article.url, '_blank')"
+              @click="openArticle(article.url)"
             >
               <img :src="article.image" class="thumbnail" />
-              <div class="source">
+              <!-- <div class="source">
                 <b>{{ article.source }}</b>
-              </div>
+              </div> -->
+              <!-- {{ article }} -->
               <div class="title">{{ article.title }}</div>
               <div class="author">{{ article.author }}</div>
               <br />
@@ -191,6 +224,9 @@ export default {
     };
   },
   methods: {
+    openArticle(url) {
+      window.open(url, "_blank");
+    },
     async getNews() {
       const results = await fetch(
         `http://api.mediastack.com/v1/news?access_key=${
@@ -198,7 +234,7 @@ export default {
         }&keywords=${this.selectedCandidate.name.replaceAll(
           ",",
           ""
-        )}&sort=published_desc&countries=us&languages=en&limit=15`
+        )}&sort=published_desc&countries=us&languages=en&sources=-dvidshub&limit=15`
       );
       if (results.status == 200) {
         const data = await results.json();
@@ -245,7 +281,9 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-
+.info-container
+  p
+    margin-top: -10px
 .bar-charts
   display: flex
   max-width: 1500px
@@ -262,7 +300,10 @@ export default {
 
 .thumbnail
   width: 180px
+  height: 100px
+  object-fit: cover
   border-radius: 5px
+  margin-bottom: 10px
 
 .container
   position: absolute
