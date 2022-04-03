@@ -62,16 +62,16 @@
       </div>
     </div>
     <!-- candidate results -->
-    <div v-show="step == 3" class="shadow p-3 mb-5 bg-white rounded">
+    <div
+      v-show="step == 3"
+      class="shadow p-3 mb-5 bg-white rounded"
+      style="max-width: 2000px"
+    >
       <h1>Candidate Information</h1>
       <hr />
       <div class="dashboard">
         <div class="btn btn-primary" @click="getNews()">Get News</div>
         <!-- donors -->
-        <!-- {{ donors }} -->
-        <!-- <div class="donor" v-for="(key, value) in donors" :key="key"> -->
-        <!-- <p>${{ key.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} {{ value }}</p> -->
-
         <div class="bar-charts-container">
           <div class="bar-charts">
             <Bar
@@ -91,8 +91,21 @@
         </div>
 
         <!-- articles -->
-        <h2 style="font-size: 25px; margin-bottom: -10px">Related Articles</h2>
-        <hr />
+        <div
+          style="
+            display: flex;
+            justify-content: center;
+            position: relative;
+            left: -10px;
+          "
+        >
+          <div style="max-width: 980px; width: 100%; text-align: center">
+            <h2 style="font-size: 25px; margin-bottom: -10px">
+              Related Articles
+            </h2>
+            <hr />
+          </div>
+        </div>
         <div
           class="articles-container"
           style="display: flex; justify-content: center"
@@ -102,12 +115,13 @@
               v-for="article in newsResults"
               :key="article"
               class="article"
-              @click="window.open(article.url, '_blank')"
+              @click="openArticle(article.url)"
             >
               <img :src="article.image" class="thumbnail" />
-              <div class="source">
+              <!-- <div class="source">
                 <b>{{ article.source }}</b>
-              </div>
+              </div> -->
+              <!-- {{ article }} -->
               <div class="title">{{ article.title }}</div>
               <div class="author">{{ article.author }}</div>
               <br />
@@ -191,6 +205,9 @@ export default {
     };
   },
   methods: {
+    openArticle(url) {
+      window.open(url, "_blank");
+    },
     async getNews() {
       const results = await fetch(
         `http://api.mediastack.com/v1/news?access_key=${
@@ -198,7 +215,7 @@ export default {
         }&keywords=${this.selectedCandidate.name.replaceAll(
           ",",
           ""
-        )}&sort=published_desc&countries=us&languages=en&limit=15`
+        )}&sort=published_desc&countries=us&languages=en&sources=-dvidshub&limit=15`
       );
       if (results.status == 200) {
         const data = await results.json();
@@ -262,7 +279,10 @@ export default {
 
 .thumbnail
   width: 180px
+  height: 100px
+  object-fit: cover
   border-radius: 5px
+  margin-bottom: 10px
 
 .container
   position: absolute
