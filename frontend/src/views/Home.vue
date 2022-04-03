@@ -5,10 +5,12 @@
       v-show="step == 1"
       :class="{ center: step == 1 }"
       class="container shadow p-3 mb-5 bg-white rounded"
+      :style="{ 'border': focused ? '1px solid #2C3E50': 'none'}"
     >
       <h1>Welcome to Lorem Ipsum</h1>
       <br />
       <input
+        @focus="focused = true"
         class="form-control"
         v-model="inputName"
         placeholder="Enter Candidate Name"
@@ -31,6 +33,10 @@
           v-for="candidate in candidateResults"
           :key="candidate"
           class="candidate"
+          :class="{
+            dem: candidate.party_full.toLowerCase().includes('democrat'),
+            rep: candidate.party_full.toLowerCase().includes('republican'),
+          }"
         >
           <p class="name">{{ titleCase(candidate.name) }}</p>
           <div class="party-container">
@@ -72,32 +78,46 @@
       <hr />
       <div class="dashboard">
         <div class="info-container">
-          <br>
-          <p><b>Name: </b> {{ titleCase(selectedCandidate.name) }}</p>
-          <p><b>Selected Year: </b> {{ selectedYear }}</p>
-          <p v-show="selectedCandidate.state != 'US'"><b>{{ selectedCandidate.state }}</b></p>
-          <p><b>Party: </b>{{  titleCase(selectedCandidate.party_full) }}</p>
-          <p><b>Position Status:</b> {{ selectedCandidate.incumbent_challenge_full }}</p>
-          <p><b>Office:</b> {{ selectedCandidate.office_full }}</p>
-          <p><b>Political Activism Through:</b> {{ selectedCandidate.active_through }}</p>
-            <div v-if="selectedCandidate.election_years != null">
-            <p><b>Select Another Year</b></p>
-            <div class="years-row">
-              <div
-                class="year"
-                @click="selectCandidate(year)"
-                v-for="year in selectedCandidate.election_years.filter((x) => x != selectedYear)"
-                :key="year"
-              >
-                {{ year }}
+          <div class="col" style='flex: 1'>
+            <br>
+            <p><b>Name: </b> {{ titleCase(selectedCandidate.name) }}</p>
+            <p v-show="selectedCandidate.state != 'US'"><b>State:</b> {{ selectedCandidate.state }}</p>
+            <p><b>Party: </b>{{  titleCase(selectedCandidate.party_full) }}</p>
+            <p><b>Position Status:</b> {{ selectedCandidate.incumbent_challenge_full }}</p>
+            <p><b>Office:</b> {{ selectedCandidate.office_full }}</p>
+            <p><b>Political Activism Through:</b> {{ selectedCandidate.active_through }}</p>
+            <p><b>Selected Year: </b> {{ selectedYear }}</p>
+              <div v-if="selectedCandidate.election_years != null">
+              <p><b>Pick Another Year:</b></p>
+              <div class="years-row">
+                <div
+                  class="year"
+                  @click="selectCandidate(year)"
+                  v-for="year in selectedCandidate.election_years.filter((x) => x != selectedYear)"
+                  :key="year"
+                >
+                  {{ year }}
+                </div>
+                <div v-show="loading" class="spinner-border text-primary" role="status"></div>
               </div>
             </div>
+            <p></p>
           </div>
-          <p></p>
+          <div class="col" style='flex: 1; text-align: center;'>
+            <br>
+            <br>
+            <div v-if="donors.financials != null">
+              <p class="amount" style="color:green">${{ addCommas(donors.financials['Total Funds Raised']) }}</p>
+              <p class="tag">Funds Raised</p>
+              <p class="amount" style="color:red">${{ addCommas(donors.financials['Total Expenditures']) }}</p>
+              <p class="tag">Total Expenditure</p>
+            </div>
+
+          </div>
         </div>
         <br>
         <!-- donors -->
-        <h2 style="text-align: center;">Financial Donors</h2>
+        <h2 style="text-align: center;">Financials</h2>
         <div class="bar-charts-container">
           <div class="bar-charts">
             <div class="chart"  style="flex: 1">
@@ -149,7 +169,7 @@
         <div class="articles-container">
           <div class="articles">
             <div
-              v-for="article in newsResults"
+              v-for="article in articles"
               :key="article"
               class="article"
               @click="openArticle(article.url)"
@@ -159,7 +179,7 @@
                 <b>{{ article.source }}</b>
               </div> -->
               <!-- {{ article }} -->
-              <div class="title">{{ article.title }}</div>
+              <div class="title">{{ formatTitle(article.title) }}</div>
               <div class="author">{{ article.author }}</div>
               <br />
             </div>
@@ -197,6 +217,17 @@ export default {
     Bar,
   },
   computed: {
+    color(){
+      if(this.selectedCandidate != undefined && this.selectedCandidate != null){
+        if(this.selectedCandidate.party_full.toLowerCase().includes('republican')){
+          return "#CB4335"
+        }
+        if(this.selectedCandidate.party_full.toLowerCase().includes('democrat')){
+          return "#2E86C1"
+        }
+      }
+      return "green"
+    },
     stateChartData() {
       const labels = [];
       const data = [];
@@ -213,7 +244,7 @@ export default {
           datasets: [
             {
               label: "Money Donated (USD)",
-              backgroundColor: "#2874A6",
+              backgroundColor: this.color,
               data: data,
             },
           ],
@@ -241,7 +272,7 @@ export default {
           datasets: [
             {
               label: "Money Donated (USD)",
-              backgroundColor: "#2874A6",
+              backgroundColor: this.color,
               data: data,
             },
           ],
@@ -261,8 +292,10 @@ export default {
       candidateResults: {},
       selectedCandidate: {},
       selectedYear: 0, 
-      newsResults: {},
+      articles: {},
       donors: {},
+      focused: false,
+      loading: true,
       chartOptions: {
         responsive: true,
       },
@@ -274,6 +307,15 @@ export default {
     };
   },
   methods: {
+    formatTitle(title) {
+      if(title != null){
+        if(title.length > 80){
+          return title.substring(0,80) + '...'
+        }
+        return title
+      }
+      return '';
+    },
     titleCase(value){
       if (value == null || value == undefined){
         return '';
@@ -290,16 +332,17 @@ export default {
         }&keywords=${this.selectedCandidate.name.replaceAll(
           ",",
           ""
-        )}&sort=published_desc&countries=us&languages=en&sources=-dvidshub&limit=15`
+        )}&sort=published_desc&countries=us&languages=en&sources=cnn,fox,bbc&limit=15`
       );
       if (results.status == 200) {
         const data = await results.json();
-        this.newsResults = data.data
+        this.articles = data.data
           .filter((article) => article.image != null)
           .slice(0, 8);
       }
     },
     async selectCandidate(year, candidate) {
+      this.loading = true
       console.log('selecting candidate');
 
       if(candidate != null){
@@ -324,8 +367,8 @@ export default {
       if (response.status == 200) {
         const result = await response.json();
         console.log(result);
-        
-        this.donors = result;
+        this.loading = false
+        this.donors = result
       }
       if (this.step == 2){
         this.step += 1;
@@ -342,20 +385,31 @@ export default {
         this.step += 1;
       }
     },
+
+    addCommas(x) {
+      if (x == null || x == undefined) return ''
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
   },
 };
 </script>
 
 <style lang="sass" scoped>
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;500;600&family=Space+Mono&display=swap');
 
+.home
+  margin-top: 100px
+  font-family: 'League Spartan', sans-serif
+  font-size: 20px
 .related-articles 
-  max-width: 980px
+  max-width: 1180px
   width: 100%
   text-align: center
   h2 
     font-size: 25px
     margin-bottom: -10px
 .info-container
+  display: flex
   p
     margin-top: -10px
 .bar-charts-container
@@ -375,19 +429,29 @@ export default {
   display: flex
   justify-content: center
   .articles
-    max-width: 1000px
+    gap: 10px
+    max-width: 1200px
     display: flex
     flex-flow: row wrap
-    justify-content: flex-start
+    justify-content: center
     .article
-      max-width: 200px
+      max-width: 210px
+      border-radius: 8px
+      box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px
+      padding: 10px
+      transition: all .14s ease-in-out
+      &:hover
+        transform: scale(1.02)
+      .title
+        font-size: 17px
+        line-height: 20px
       .source
         font-size: 15px
         padding-top: 10px
 
 .thumbnail
-  width: 180px
-  height: 100px
+  width: 190px
+  height: 120px
   object-fit: cover
   border-radius: 5px
   margin-bottom: 10px
@@ -416,11 +480,15 @@ export default {
   flex-direction: column
   justify-content: flex-start !important
   .candidate
-    transition: .2s all ease-in-out
+    transition: .1s all ease-in-out
     border-radius: 10px
-    padding: 5px 0 5px 10px
-    &:hover
-      background: #F2F4F4
+    padding: 5px 0 10px 10px
+    &.dem
+      &:hover
+        background: rgba(46, 134, 193, .1)
+    &.rep
+      &:hover
+        background: rgba(203, 67, 53, .08)
     .name
       font-size: 30px
     .party-container
@@ -449,4 +517,14 @@ export default {
     &:hover
       background: #34495E
       color: white
+
+.amount
+  font-size: 40px
+  font-weight: bold
+  margin-bottom: 5px
+
+.tag
+  font-size: 20px
+  font-weight: bold
+
 </style>
