@@ -8,6 +8,9 @@
             <li class="nav-item">
               <a class="nav-link" href="/" style="padding-right: 25px">Home</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="https://github.com/JosephShepin/PaperTrails" style="padding-right: 25px">Github</a>
+            </li>
           </ul>
         </div>
       </nav>
