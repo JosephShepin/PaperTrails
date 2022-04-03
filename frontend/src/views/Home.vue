@@ -162,7 +162,7 @@
           <p class="tag" style="margin-bottom: -5px">Total Expenditure</p>
         </div>
 
-        <div class="shadow p-3 mb-5 bg-white rounded" style="margin: 0">
+        <div class="shadow p-3 mb-2 bg-white rounded" style="margin: 0">
           <Bar
             :chart-options="chartOptions"
             :chart-data="donorChartData"
@@ -174,6 +174,37 @@
           <h2 style="margin-bottom: -5px; margin-top: 10px; text-align: center">
             Top Individual Donations By Employer
           </h2>
+        </div>
+        <div class="shadow p-3 mb-5 bg-white rounded" style="margin: 0">
+          <!-- articles -->
+          <div class="large-articles-container">
+            <div class="related-articles">
+              <h2>Related News</h2>
+              <hr />
+            </div>
+          </div>
+          <div class="btn btn-primary" @click="getNews()">Get News</div>
+          <div class="articles-container">
+            <div class="articles">
+              <div
+                v-for="article in articles"
+                :key="article"
+                class="article"
+                @click="openArticle(article.url)"
+              >
+                <img :src="article.image" class="thumbnail" />
+                <div class="data">
+                  <div class="title">{{ formatTitle(article.title) }}</div>
+                  <div class="published-at">
+                    {{ convertDate(article.published_at) }}
+                  </div>
+                  <div class="author">{{ article.author }}</div>
+                </div>
+
+                <br />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="main-col" style="flex: 1">
@@ -210,7 +241,10 @@
             </table>
           </div>
         </div>
-        <div class="shadow p-3 mb-5 bg-white rounded" v-show="donors.super_pacs != null && donors.super_pacs.length > 0 ">
+        <div
+          class="shadow p-3 mb-5 bg-white rounded"
+          v-show="donors.super_pacs != null && donors.super_pacs.length > 0"
+        >
           <div class="spending">
             <div class="">
               <div
@@ -300,7 +334,24 @@ export default {
     chartData() {
       const labels = [];
       const data = [];
-      const colors = ["#5668e2", "#8a56e2", "#cf56e2", "#e256ae", "#e25668", "#e28956", "#e2cf56", "#aee256", "#68e256", "##56e289", "#56e2cf", "#56aee2", "#5668e2", "#5668e2", "#8a56e2", "#cf56e2"]
+      const colors = [
+        "#5668e2",
+        "#8a56e2",
+        "#cf56e2",
+        "#e256ae",
+        "#e25668",
+        "#e28956",
+        "#e2cf56",
+        "#aee256",
+        "#68e256",
+        "##56e289",
+        "#56e2cf",
+        "#56aee2",
+        "#5668e2",
+        "#5668e2",
+        "#8a56e2",
+        "#cf56e2",
+      ];
       if (this.donors.super_pacs != null) {
         if (this.donors.super_pacs.length > 12) {
           this.donors.super_pacs.length = 12;
@@ -309,7 +360,7 @@ export default {
           labels.push(name);
           data.push(total);
         });
-        colors.length = labels.length
+        colors.length = labels.length;
         return {
           labels: labels,
           datasets: [
@@ -383,13 +434,13 @@ export default {
         if (this.donors.donors.length > 20) {
           this.donors.donors.length = 20;
         }
-        let count = 0
+        let count = 0;
         this.donors.donors.companies.forEach((x) => {
-          if(count< 20){
+          if (count < 20) {
             labels.push(x[0]);
             data.push(x[1]);
           }
-          count++
+          count++;
         });
         return {
           labels: labels,
