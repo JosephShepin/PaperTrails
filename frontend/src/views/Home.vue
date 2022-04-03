@@ -164,7 +164,7 @@
         >
           <div class="related-articles">
             <h2>
-              Related Articles
+              Related News
             </h2>
             <hr />
           </div>
@@ -179,12 +179,14 @@
               @click="openArticle(article.url)"
             >
               <img :src="article.image" class="thumbnail" />
+              <div class="data">
+              <div class="title">{{ formatTitle(article.title) }}</div>
+              <div class="published-at">{{ convertDate(article.published_at) }}</div>
+              <div class="author">{{ article.author }}</div>
+              </div>
               <!-- <div class="source">
-                <b>{{ article.source }}</b>
               </div> -->
               <!-- {{ article }} -->
-              <div class="title">{{ formatTitle(article.title) }}</div>
-              <div class="author">{{ article.author }}</div>
               <br />
             </div>
           </div>
@@ -312,10 +314,14 @@ export default {
     };
   },
   methods: {
+    convertDate(dateStr){
+      const date = new Date(dateStr)
+      return date.toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"}) 
+    },
     formatTitle(title) {
       if(title != null){
-        if(title.length > 80){
-          return title.substring(0,80) + '...'
+        if(title.length > 180){
+          return title.substring(0,180) + '...'
         }
         return title
       }
@@ -412,7 +418,8 @@ export default {
   width: 100%
   text-align: center
   h2 
-    font-size: 25px
+    font-size: 35px
+    font-weight: bold
     margin-bottom: -10px
 .info-container
   display: flex
@@ -429,38 +436,42 @@ export default {
   .chart
     .title
       text-align: center
-      font-size: 20px
+      font-size: 25px
       margin-bottom: -10px
+      
 .articles-container 
-  display: flex
-  justify-content: center
+  // display: flex
+  // justify-content: center
   .articles
     gap: 10px
-    max-width: 1200px
-    display: flex
-    flex-flow: row wrap
-    justify-content: center
+    // max-width: 1200px
+    // display: flex
+    // flex-flow: row wrap
+    // justify-content: center
+    
     .article
-      max-width: 210px
-      border-radius: 8px
-      box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px
+      display: flex
+      // max-width: 210px
+      border-radius: 2px
+      // box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px
       padding: 10px
       transition: all .14s ease-in-out
       &:hover
-        transform: scale(1.02)
-      .title
-        font-size: 17px
-        line-height: 20px
-      .source
-        font-size: 15px
-        padding-top: 10px
+        transform: scale(1.005)
 
-.thumbnail
-  width: 190px
-  height: 120px
-  object-fit: cover
-  border-radius: 5px
-  margin-bottom: 10px
+    .thumbnail
+      width: 190px
+      height: 120px
+      object-fit: cover
+      border-radius: 3px
+      margin-bottom: 10px
+    .data
+      padding-left: 30px
+      .title
+        font-size: 28px
+        font-weight: bold
+      .published-at
+        font-size: 20px
 
 .container
   position: absolute
