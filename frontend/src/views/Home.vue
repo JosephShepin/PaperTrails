@@ -29,6 +29,11 @@
     <!-- candidate select -->
     <div v-show="step == 2" class="shadow p-3 mb-5 bg-white rounded">
       <h1>Select Candidate And Year</h1>
+      <div
+        v-show="loading"
+        class="spinner-border text-secondary"
+        role="status"
+      ></div>
       <hr />
       <div class="candidates">
         <div
@@ -112,7 +117,11 @@
               </div>
               <div
                 v-show="loading"
-                class="spinner-border text-primary"
+                class="spinner-border"
+                :class="{
+                  'text-primary': selectedCandidate.party_full.toLowerCase().includes('democrat'),
+                  'text-danger': selectedCandidate.party_full.toLowerCase().includes('republican'),
+               }"
                 role="status"
               ></div>
             </div>
@@ -279,7 +288,7 @@ export default {
       articles: {},
       donors: {},
       focused: false,
-      loading: true,
+      loading: false,
       chartOptions: {
         responsive: true,
       },
