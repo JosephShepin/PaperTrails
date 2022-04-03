@@ -84,20 +84,19 @@ def getContributionMap(candidate_data, contributions):
     return fig.to_image(format="svg")
 
 def getRecentPACDonations(committee_id, cycle):
-    r = requestFEC('schedules/schedule_e/by_candidate/', { 'sort':'-contribution_receipt_date', 'committee_id':committee_id, 'contributor_type':'committee', 'two_year_transaction_period':str(cycle), 'line_number':'F3-11C', 'per_page':'10'})
-    pacs = r.json()['results']
-    out = []
-    for i in pacs:
-        out.append({'name':i['contributor_name'], 'total':i['contribution_receipt_amount'], 'date':'contribution_receipt_date'})
-    return out
+    r = requestFEC('schedules/schedule_a/', { 'sort':'-contribution_receipt_date', 'committee_id':committee_id, 'contributor_type':'committee', 'two_year_transaction_period':str(cycle), 'line_number':'F3-11C', 'per_page':'10'})
+    print(r.json())
+    pacs = []
+    for i in r.json()['results']:
+        pacs.append({'name':i['contributor_name'], 'total':i['contribution_receipt_amount'], 'date':'contribution_receipt_date'})
+    return pacs
 
 def getSuperPACDonations(candidate_id, cycle):
     r = requestFEC('schedules/schedule_e/by_candidate/', {'candidate_id':candidate_id, 'cycle':str(cycle), 'sort':'-total', 'per_page':'20'})
-    pacs = r.json()['results']
-    out = []
-    for i in pacs:
-        out.append( {'name':i['committee_name'], 'total':i['total']})
-    return out
+    pacs = []
+    for i in r.json()['results']:
+        pacs.append( {'name':i['committee_name'], 'total':i['total']})
+    return pacs
 
 def fetchAllData(candidate_id, candidate_data, cycle):
     com = getCommittee(candidate_data, cycle)
