@@ -83,5 +83,5 @@ def fetchAllData(candidate_id, candidate_data, cycle):
     con = fetchContributionsByState(candidate_id, cycle)
     fin = fetchFinancials(com, cycle)
     img = getContributionMap(con)
-    return {'donors':don, 'contributors':con, 'map':"".join(map(chr, img)), 'financials':fin}
+    return {'donors':don, 'contributors':con, 'map':img.decode("utf-8"), 'financials':fin}
 
