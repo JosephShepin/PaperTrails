@@ -85,7 +85,6 @@ def getContributionMap(candidate_data, contributions):
 
 def getRecentPACDonations(committee_id, cycle):
     r = requestFEC('schedules/schedule_a/', { 'sort':'-contribution_receipt_date', 'committee_id':committee_id, 'contributor_type':'committee', 'two_year_transaction_period':str(cycle), 'line_number':'F3-11C', 'per_page':'10'})
-    print(r.json())
     pacs = []
     for i in r.json()['results']:
         pacs.append({'name':i['contributor_name'], 'total':i['contribution_receipt_amount'], 'date':'contribution_receipt_date'})
