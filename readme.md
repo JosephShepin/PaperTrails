@@ -3,7 +3,7 @@
 
 ![](./media/screenshot.png "Screen-shot")
 
-Paper Trails sheds light on the financial backings of **all** federal political candidates, including Representative, Senators, and Presidents. This website compiles big data from the Federal Election Commission, which are normally hard to find and harder to understand, into **easily digestable** information in a **user-friendly** interface.
+Paper Trails sheds light on the financial backings of **all** federal political candidates, including Representative, Senators, and Presidents. This website compiles big data from the Federal Election Commission, which are normally hard to find and harder to understand, into **easily digestible** information in a **user-friendly** interface.
 
 This project was coded in 24 hours for [SHS Hacks 2022](https://shshacks.io/). The code can be found [here](https://github.com/JosephShepin/shs-hacks-2022) on [GitHub](https://github.com/).
 

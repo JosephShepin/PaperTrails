@@ -248,7 +248,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="state in donors.contributors.reverse()" :key="state">
+                <tr v-for="state in donors.contributors.slice().reverse()" :key="state">
                   <td>{{ state[2] }}</td>
                   <td>${{ addCommas(state[1]) }}</td>
                 </tr>
@@ -288,8 +288,7 @@
                   />
                 </div>
               </div>
-
-              <div class="table-wrapper">
+              <div class="table-wrapper" v-if="this.donors.super_pacs != null">
                 <table class="table">
                   <thead>
                     <tr>
@@ -299,7 +298,7 @@
                   </thead>
                   <tbody>
                     <tr
-                      v-for="{ name, total } in this.donors.super_pacs"
+                      v-for="{ name, total } in donors.super_pacs"
                       :key="name"
                     >
                       <td>{{ titleCase(name) }}</td>
@@ -425,7 +424,7 @@ export default {
         // if(this.donors.contributors[0][1] < this.donors.contributors[1][1]){
         //   this.donors.contributors = this.donors.contributors.reverse()
         // }
-        this.donors.contributors.forEach((x) => {
+        this.donors.contributors.forEach((x, c) => {
           labels.push(x[0]);
           data.push(x[1]);
         });
