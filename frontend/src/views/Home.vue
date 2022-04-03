@@ -72,32 +72,46 @@
       <hr />
       <div class="dashboard">
         <div class="info-container">
-          <br>
-          <p><b>Name: </b> {{ titleCase(selectedCandidate.name) }}</p>
-          <p><b>Selected Year: </b> {{ selectedYear }}</p>
-          <p v-show="selectedCandidate.state != 'US'"><b>{{ selectedCandidate.state }}</b></p>
-          <p><b>Party: </b>{{  titleCase(selectedCandidate.party_full) }}</p>
-          <p><b>Position Status:</b> {{ selectedCandidate.incumbent_challenge_full }}</p>
-          <p><b>Office:</b> {{ selectedCandidate.office_full }}</p>
-          <p><b>Political Activism Through:</b> {{ selectedCandidate.active_through }}</p>
-            <div v-if="selectedCandidate.election_years != null">
-            <p><b>Select Another Year</b></p>
-            <div class="years-row">
-              <div
-                class="year"
-                @click="selectCandidate(year)"
-                v-for="year in selectedCandidate.election_years.filter((x) => x != selectedYear)"
-                :key="year"
-              >
-                {{ year }}
+          <div class="col" style='flex: 1'>
+            <br>
+            <p><b>Name: </b> {{ titleCase(selectedCandidate.name) }}</p>
+            <p v-show="selectedCandidate.state != 'US'"><b>State:</b> {{ selectedCandidate.state }}</p>
+            <p><b>Party: </b>{{  titleCase(selectedCandidate.party_full) }}</p>
+            <p><b>Position Status:</b> {{ selectedCandidate.incumbent_challenge_full }}</p>
+            <p><b>Office:</b> {{ selectedCandidate.office_full }}</p>
+            <p><b>Political Activism Through:</b> {{ selectedCandidate.active_through }}</p>
+            <p><b>Selected Year: </b> {{ selectedYear }}</p>
+              <div v-if="selectedCandidate.election_years != null">
+              <p><b>Pick Another Year:</b></p>
+              <div class="years-row">
+                <div
+                  class="year"
+                  @click="selectCandidate(year)"
+                  v-for="year in selectedCandidate.election_years.filter((x) => x != selectedYear)"
+                  :key="year"
+                >
+                  {{ year }}
+                </div>
+                <div v-show="loading" class="spinner-border text-primary" role="status"></div>
               </div>
             </div>
+            <p></p>
           </div>
-          <p></p>
+          <div class="col" style='flex: 1; text-align: center;'>
+            <br>
+            <br>
+            <div v-if="donors.financials != null">
+              <p class="amount" style="color:green">${{ addCommas(donors.financials['Total Funds Raised']) }}</p>
+              <p class="tag">Funds Raised</p>
+              <p class="amount" style="color:red">${{ addCommas(donors.financials['Total Expenditures']) }}</p>
+              <p class="tag">Total Expenditure</p>
+            </div>
+
+          </div>
         </div>
         <br>
         <!-- donors -->
-        <h2 style="text-align: center;">Financial Donors</h2>
+        <h2 style="text-align: center;">Financials</h2>
         <div class="bar-charts-container">
           <div class="bar-charts">
             <div class="chart"  style="flex: 1">
@@ -263,6 +277,7 @@ export default {
       selectedYear: 0, 
       newsResults: {},
       donors: {},
+      loading: true,
       chartOptions: {
         responsive: true,
       },
@@ -290,7 +305,7 @@ export default {
         }&keywords=${this.selectedCandidate.name.replaceAll(
           ",",
           ""
-        )}&sort=published_desc&countries=us&languages=en&sources=-dvidshub&limit=15`
+        )}&sort=published_desc&countries=us&languages=en&sources=cnn&limit=15`
       );
       if (results.status == 200) {
         const data = await results.json();
@@ -300,6 +315,7 @@ export default {
       }
     },
     async selectCandidate(year, candidate) {
+      this.loading = true
       console.log('selecting candidate');
 
       if(candidate != null){
@@ -324,8 +340,8 @@ export default {
       if (response.status == 200) {
         const result = await response.json();
         console.log(result);
-        
-        this.donors = result;
+        this.loading = false
+        this.donors = result
       }
       if (this.step == 2){
         this.step += 1;
@@ -342,12 +358,21 @@ export default {
         this.step += 1;
       }
     },
+
+    addCommas(x) {
+      if (x == null || x == undefined) return ''
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
   },
 };
 </script>
 
 <style lang="sass" scoped>
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;500;600&family=Space+Mono&display=swap');
 
+.home
+  font-family: 'League Spartan', sans-serif
+  font-size: 20px
 .related-articles 
   max-width: 980px
   width: 100%
@@ -356,6 +381,7 @@ export default {
     font-size: 25px
     margin-bottom: -10px
 .info-container
+  display: flex
   p
     margin-top: -10px
 .bar-charts-container
@@ -449,4 +475,13 @@ export default {
     &:hover
       background: #34495E
       color: white
+
+.amount
+  font-size: 40px
+  font-weight: bold
+  margin-bottom: 5px
+
+.tag
+  font-size: 20px
+  font-weight: bold
 </style>
