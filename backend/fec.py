@@ -23,17 +23,20 @@ def fetchDonors(committee_id, cycle):
   r = requestFEC('schedules/schedule_a/by_employer/', {'sort':'-total', 'committee_id':committee_id, 'cycle':str(cycle), 'per_page':'100'})
   companies = {}
 
-  individuals = {'Unemployed':0, 'Self Employed':0, 'Retired':0}
-  unemployed_re = re.compile('unemployed|not employed|information requested|none')
+  individuals = {'Unemployed':0, 'Self Employed':0, 'Retired':0, 'Miscellaneous':0}
+  unemployed_re = re.compile('unemployed|not employed')
   self_re = re.compile('self')
   retired_re = re.compile('retired')
+  misc_re = re.compile('information requested|none|n/a')
 
   for donor in r.json()['results']:
     if not donor['employer']:
-      individuals['Unemployed'] += donor['total']
+      individuals['Miscellaneous'] += donor['total']
       continue
     donor_str = donor['employer'].lower()
-    if unemployed_re.search(donor_str):
+    if misc_re.search(donor_str):
+      individuals['Miscellaneous'] += donor['total']
+    elif unemployed_re.search(donor_str):
       individuals['Unemployed'] += donor['total']
     elif self_re.search(donor_str):
       individuals['Self Employed'] += donor['total']
