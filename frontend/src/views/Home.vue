@@ -81,65 +81,63 @@
       style="display: flex; padding: 10px; margin-top: -40px"
       v-show="step == 3"
     >
-      <div class="main-col" style="flex: 1;">
+      <div class="main-col" style="flex: 1">
         <div
           class="candidate-info shadow mb-2 p-3 bg-white rounded"
-          style="margin: 0; display: flex; justify-content: space-between;"
+          style="margin: 0; display: flex; justify-content: space-between"
         >
           <div>
             <div style="display: flex">
-
-          <h1 style="margin-top: -30px;">
-            <b>{{ titleCase(selectedCandidate.name) }}</b>
-          </h1>
-          <div class="pill" :style="{ 'background': color}">
-             {{ selectedCandidate.party }}
-          </div>
-          </div>
-          <p v-show="selectedCandidate.state != 'US'">
-            <b>State:</b> {{ selectedCandidate.state }}
-          </p>
-          <p>
-            <b>Position Status:</b>
-            {{ selectedCandidate.incumbent_challenge_full }}
-          </p>
-          <p><b>Office:</b> {{ selectedCandidate.office_full }}</p>
-          <p>
-            <b>Political Activism Through:</b>
-            {{ selectedCandidate.active_through }}
-          </p>
-          <p><b>Selected Year: </b> {{ selectedYear }}</p>
-          <div v-if="selectedCandidate.election_years != null">
-            <p><b>Pick Another Year:</b></p>
-            <div class="years-row">
-              <div
-                class="year"
-                @click="selectCandidate(year)"
-                v-for="year in selectedCandidate.election_years.filter(
-                  (x) => x != selectedYear
-                )"
-                :key="year"
-              >
-                {{ year }}
+              <h1 style="margin-top: -30px">
+                <b>{{ titleCase(selectedCandidate.name) }}</b>
+              </h1>
+              <div class="pill" :style="{ background: color }">
+                {{ selectedCandidate.party }}
               </div>
-              <div
-                v-show="loading"
-                class="spinner-border"
-                :class="{
-                  'text-primary': selectedCandidate.party_full
-                    .toLowerCase()
-                    .includes('democrat'),
-                  'text-danger': selectedCandidate.party_full
-                    .toLowerCase()
-                    .includes('republican'),
-                }"
-                role="status"
-              ></div>
+            </div>
+            <p v-show="selectedCandidate.state != 'US'">
+              <b>State:</b> {{ selectedCandidate.state }}
+            </p>
+            <p>
+              <b>Position Status:</b>
+              {{ selectedCandidate.incumbent_challenge_full }}
+            </p>
+            <p><b>Office:</b> {{ selectedCandidate.office_full }}</p>
+            <p><b>Selected Year: </b> {{ selectedYear }}</p>
+            <div v-if="selectedCandidate.election_years != null">
+              <p><b>Pick Another Year:</b></p>
+              <div class="years-row">
+                <div
+                  class="year"
+                  @click="selectCandidate(year)"
+                  v-for="year in selectedCandidate.election_years.filter(
+                    (x) => x != selectedYear
+                  )"
+                  :key="year"
+                >
+                  {{ year }}
+                </div>
+                <div
+                  v-show="loading"
+                  class="spinner-border"
+                  :class="{
+                    'text-primary': selectedCandidate.party_full
+                      .toLowerCase()
+                      .includes('democrat'),
+                    'text-danger': selectedCandidate.party_full
+                      .toLowerCase()
+                      .includes('republican'),
+                  }"
+                  role="status"
+                ></div>
+              </div>
             </div>
           </div>
-          </div>
           <div class="">
-            <img style="width: 200px;" src="https://bookstore.gpo.gov/sites/default/files/covers/052-071-01555-8.JPG"/>
+            <img
+              style="width: 200px"
+              src="https://bookstore.gpo.gov/sites/default/files/covers/052-071-01555-8.JPG"
+            />
           </div>
         </div>
 
@@ -182,10 +180,29 @@
           "
           class="shadow p-3 mb-5 bg-white rounded"
         >
-          <div v-html="svgMap"></div>
-          <h2 style="margin-bottom: -5px; text-align: center">
+          <h2
+            style="margin-top: 15px; margin-bottom: -25px; text-align: center"
+          >
             Campaign Donations By State
           </h2>
+          <div v-html="svgMap"></div>
+
+          <div class="table-wrapper">
+            <table class="table" v-if="donors.contributors != null">
+              <thead>
+                <tr>
+                  <th scope="col">State</th>
+                  <th scope="col">Amount (USD)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="state in donors.contributors.reverse()" :key="state">
+                  <td>{{ state[2] }}</td>
+                  <td>{{ addCommas(state[1]) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
         <div class="shadow p-3 mb-5 bg-white rounded">
           <div class="donations">
@@ -312,7 +329,7 @@ export default {
       selectedYear: 0,
       svgMap: "",
       candidateResults: {},
-      selectedCandidate: { party: '', party_full: ''},
+      selectedCandidate: { party: "", party_full: "" },
       articles: {},
       donors: {},
       focused: false,
@@ -580,4 +597,9 @@ export default {
   margin-left: 15px
   width: 60px
   height: 26px
+
+.table-wrapper
+  width: 100%
+  height: 200px !important
+  overflow: auto
 </style>
