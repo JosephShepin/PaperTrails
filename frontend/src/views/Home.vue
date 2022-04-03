@@ -70,135 +70,88 @@
         </div>
       </div>
     </div>
-    <!-- candidate results -->
+
+    <h1 v-show="step == 3" style="padding-left: 10px; margin-top: -20px">
+      Candidate Information
+    </h1>
     <div
+      class="main-row"
+      style="display: flex; padding: 10px; margin-top: -10px"
       v-show="step == 3"
-      class="shadow p-3 mb-5 bg-white rounded"
-      style="max-width: 2000px"
     >
-      <h1>Candidate Information</h1>
-      <hr />
-      <div class="dashboard">
-        <div class="info-container">
-          <div class="col" style="flex: 1">
-            <br />
-            <p><b>Name: </b> {{ titleCase(selectedCandidate.name) }}</p>
-            <p v-show="selectedCandidate.state != 'US'">
-              <b>State:</b> {{ selectedCandidate.state }}
-            </p>
-            <p><b>Party: </b>{{ titleCase(selectedCandidate.party_full) }}</p>
-            <p>
-              <b>Position Status:</b>
-              {{ selectedCandidate.incumbent_challenge_full }}
-            </p>
-            <p><b>Office:</b> {{ selectedCandidate.office_full }}</p>
-            <p>
-              <b>Political Activism Through:</b>
-              {{ selectedCandidate.active_through }}
-            </p>
-            <p><b>Selected Year: </b> {{ selectedYear }}</p>
-            <div v-if="selectedCandidate.election_years != null">
-              <p><b>Pick Another Year:</b></p>
-              <div class="years-row">
-                <div
-                  class="year"
-                  @click="selectCandidate(year)"
-                  v-for="year in selectedCandidate.election_years.filter(
-                    (x) => x != selectedYear
-                  )"
-                  :key="year"
-                >
-                  {{ year }}
-                </div>
-                <div
-                  v-show="loading"
-                  class="spinner-border text-primary"
-                  role="status"
-                ></div>
+      <div class="main-col" style="flex: 1">
+        <div
+          class="candidate-info shadow mb-2 p-3 bg-white rounded"
+          style="margin: 0"
+        >
+          <br />
+          <p><b>Name: </b> {{ titleCase(selectedCandidate.name) }}</p>
+          <p v-show="selectedCandidate.state != 'US'">
+            <b>State:</b> {{ selectedCandidate.state }}
+          </p>
+          <p><b>Party: </b>{{ titleCase(selectedCandidate.party_full) }}</p>
+          <p>
+            <b>Position Status:</b>
+            {{ selectedCandidate.incumbent_challenge_full }}
+          </p>
+          <p><b>Office:</b> {{ selectedCandidate.office_full }}</p>
+          <p>
+            <b>Political Activism Through:</b>
+            {{ selectedCandidate.active_through }}
+          </p>
+          <p><b>Selected Year: </b> {{ selectedYear }}</p>
+          <div v-if="selectedCandidate.election_years != null">
+            <p><b>Pick Another Year:</b></p>
+            <div class="years-row">
+              <div
+                class="year"
+                @click="selectCandidate(year)"
+                v-for="year in selectedCandidate.election_years.filter(
+                  (x) => x != selectedYear
+                )"
+                :key="year"
+              >
+                {{ year }}
               </div>
-            </div>
-            <p></p>
-          </div>
-          <div class="col" style="flex: 1; text-align: center">
-            <br />
-            <br />
-            <div v-if="donors.financials != null">
-              <p class="amount" style="color: green">
-                ${{ addCommas(donors.financials["Total Funds Raised"]) }}
-              </p>
-              <p class="tag">Funds Raised</p>
-              <p class="amount" style="color: red">
-                ${{ addCommas(donors.financials["Total Expenditures"]) }}
-              </p>
-              <p class="tag">Total Expenditure</p>
+              <div
+                v-show="loading"
+                class="spinner-border text-primary"
+                role="status"
+              ></div>
             </div>
           </div>
-        </div>
-        <br />
-        <!-- donors -->
-        <h2 style="text-align: center">Financials</h2>
-        <div class="bar-charts-container">
-          <div class="bar-charts">
-            <div class="chart" style="flex: 1">
-              <p class="title">Top Corporate Donors</p>
-              <Bar
-                class="shadow-sm p-3 mb-5 bg-white rounded"
-                style="width: 100%; height: 400px"
-                :chart-options="chartOptions"
-                :chart-data="donorChartData"
-                chart-id="companies-chart"
-                dataset-id-key="label"
-                width="400"
-                height="200"
-              />
-            </div>
-            <div class="chart" style="flex: 1">
-              <p class="title">Donors By State</p>
-              <!-- <Bar
-                class="shadow-sm p-3 mb-5 bg-white rounded"
-                style="width: 100%; height: 400px;"
-                :chart-options="chartOptions"
-                :chart-data="stateChartData"
-                chart-id="companies-chart"
-                dataset-id-key="label"
-                width="400"
-                height="200"
-              /> -->
-              <div style="margin-top: 5px" v-html="svgMap"></div>
-            </div>
-          </div>
+          <p></p>
         </div>
 
-        <!-- articles -->
-        <div class="large-articles-container">
-          <div class="related-articles">
-            <h2>Related News</h2>
-            <hr />
-          </div>
-        </div>
-        <div class="btn btn-primary" @click="getNews()">Get News</div>
-        <div class="articles-container">
-          <div class="articles">
-            <div
-              v-for="article in articles"
-              :key="article"
-              class="article"
-              @click="openArticle(article.url)"
-            >
-              <img :src="article.image" class="thumbnail" />
-              <div class="data">
-                <div class="title">{{ formatTitle(article.title) }}</div>
-                <div class="published-at">
-                  {{ convertDate(article.published_at) }}
-                </div>
-                <div class="author">{{ article.author }}</div>
-              </div>
-              <!-- <div class="source">
-              </div> -->
-              <!-- {{ article }} -->
-              <br />
-            </div>
-          </div>
+        <Bar
+          class="shadow p-3 mb-5 bg-white rounded"
+          style="margin: 0"
+          :chart-options="chartOptions"
+          :chart-data="donorChartData"
+          chart-id="companies-chart"
+          dataset-id-key="label"
+          width="400"
+          height="200"
+        />
+      </div>
+      <div class="main-col" style="flex: 1">
+        <div
+          style="margin-top: 5px"
+          class="shadow p-3 mb-5 bg-white rounded"
+          v-html="svgMap"
+        ></div>
+        <div
+          v-if="donors.financials != null"
+          class="shadow p-3 mb-5 bg-white rounded"
+        >
+          <p class="amount" style="color: green">
+            ${{ addCommas(donors.financials["Total Funds Raised"]) }}
+          </p>
+          <p class="tag">Funds Raised</p>
+          <p class="amount" style="color: red">
+            ${{ addCommas(donors.financials["Total Expenditures"]) }}
+          </p>
+          <p class="tag">Total Expenditure</p>
         </div>
       </div>
     </div>
@@ -466,7 +419,8 @@ export default {
       text-align: center
       font-size: 25px
       margin-bottom: -10px
-
+.rounded
+  margin: 0
 .articles-container
   // display: flex
   // justify-content: center
