@@ -25,6 +25,7 @@
         Search Candidates
       </button>
     </div>
+    
     <!-- candidate select -->
     <div v-show="step == 2" class="shadow p-3 mb-5 bg-white rounded">
       <h1>Select Candidate And Year</h1>
@@ -135,8 +136,8 @@
               />
             </div>
             <div class="chart"  style="flex: 1">
-              <p class="title">Total Donors By State</p>
-              <Bar
+              <p class="title">Donors By State</p>
+              <!-- <Bar
                 class="shadow-sm p-3 mb-5 bg-white rounded"
                 style="width: 100%; height: 400px;"
                 :chart-options="chartOptions"
@@ -145,7 +146,9 @@
                 dataset-id-key="label"
                 width="400"
                 height="200"
-              />
+              /> -->
+              <div style="margin-top: 5px" v-html="svgMap"></div>
+
             </div>
           </div>
         </div>
@@ -288,11 +291,12 @@ export default {
   },
   data() {
     return {
-      step: 1,
       inputName: "Joseph Biden",
+      step: 1,
+      selectedYear: 0, 
+      svgMap: '',
       candidateResults: {},
       selectedCandidate: {},
-      selectedYear: 0, 
       articles: {},
       donors: {},
       focused: false,
@@ -370,6 +374,7 @@ export default {
         console.log(result);
         this.loading = false
         this.donors = result
+        this.svgMap = result.map
       }
       if (this.step == 2){
         this.step += 1;
