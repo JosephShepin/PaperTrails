@@ -210,7 +210,7 @@
             </table>
           </div>
         </div>
-        <div class="shadow p-3 mb-5 bg-white rounded">
+        <div class="shadow p-3 mb-5 bg-white rounded" v-show="donors.super_pacs != null && donors.super_pacs.length > 0 ">
           <div class="spending">
             <div class="">
               <div
@@ -240,7 +240,7 @@
                 </div>
               </div>
 
-              <div class="table-wrapper" v-if="donors.super_pacs != null">
+              <div class="table-wrapper">
                 <table class="table">
                   <thead>
                     <tr>
