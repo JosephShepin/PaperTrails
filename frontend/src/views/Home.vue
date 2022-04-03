@@ -327,7 +327,9 @@ export default {
         
         this.donors = result;
       }
-      this.step += 1;
+      if (this.step == 2){
+        this.step += 1;
+      }
     },
 
     async searchCandidates() {
