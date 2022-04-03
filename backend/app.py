@@ -16,9 +16,7 @@ def main():
     year = request.headers.get('year') # the year wanted of the selected candidate
     
     candidateData = request.json # all of the data for the candidate
-    #print(candidateData)
-    #print('\n'*5)
-    data = fec.fetchAllData(candidateData, int(year))
+    data = fec.fetchAllData(candidateID, candidateData, int(year))
     # formulate a response
     response = jsonify(data)
     response.headers.add('Access-Control-Allow-Origin', '*')
