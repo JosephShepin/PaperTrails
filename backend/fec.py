@@ -58,7 +58,7 @@ def fetchContributionsByState(candidate_id, cycle):
     contributions = []
     for state in r.json()['results']:
         contributions.append([state['state'], state['total'], state['state_full']])
-    sorted(contributions, key=lambda x: x[1])
+    contributions = sorted(contributions, key=lambda x: x[1])
     return contributions
 
 def fetchAllData(candidate_id, candidate_data, cycle):
