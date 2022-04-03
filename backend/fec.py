@@ -49,9 +49,10 @@ def fetchDonors(committee_id, cycle):
         individuals[k] = round(v, 2)
     return {'individuals':individuals, 'companies':companies}
 
-def fetchMoneyRaised(committee_id, cycle):
+def fetchFinancials(committee_id, cycle):
     r = requestFEC('committee/' + committee_id + '/totals/', {'cycle':str(cycle)})
-    return r.json()['results'][0]['receipts']
+    financials = r.json()['results'][0]
+    return {'Total Funds Raised':financials['receipts'],'Total Expenditures':financials['disbursements']}
 
 def fetchContributionsByState(candidate_id, cycle):
     r = requestFEC('schedules/schedule_a/by_state/by_candidate', {'candidate_id':candidate_id, 'cycle':str(cycle), 'per_page':'100'})
@@ -65,5 +66,6 @@ def fetchAllData(candidate_id, candidate_data, cycle):
     com = getCommittee(candidate_data, cycle)
     don = fetchDonors(com, cycle)
     con = fetchContributionsByState(candidate_id, cycle)
-    return {'donors':don, 'contributors':con}
+    fin = fetchFinancials(com, cycle)
+    return {'donors':don, 'contributors':con, 'financials':fin}
 
