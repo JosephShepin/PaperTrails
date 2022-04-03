@@ -89,7 +89,7 @@
         >
           <div>
             <div style="display: flex">
-              <h1 style="margin-top: -30px">
+              <h1 style="margin-top: -30px;">
                 <b>{{ titleCase(selectedCandidate.name) }}</b>
               </h1>
               <div class="pill" :style="{ background: color }">
@@ -135,11 +135,14 @@
             </div>
           </div>
           <div class="">
+                          <div class="btn btn-outline-secondary" @click="reset()">Search New Candidate</div>
+
             <div v-if="donors.picture != null">
               <img
                 style="
                   width: 200px;
                   border-radius: 3px;
+                  margin-top: 10px;
                   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
                 "
                 :src="donors.picture"
@@ -484,6 +487,17 @@ export default {
     };
   },
   methods: {
+    reset(){
+      this.selectedYear= 0
+       this.svgMap= ""
+       this.candidateResults= {}
+       this.selectedCandidate= { party: "", party_full: "" }
+       this.articles= {}
+       this.donors= {}
+       this.focused= false,
+       this.loading= false,
+      this.step = 1
+    },
     convertDate(dateStr) {
       const date = new Date(dateStr);
       return date.toLocaleDateString("en-us", {
@@ -623,20 +637,11 @@ export default {
 .rounded
   margin: 0
 .articles-container
-  // display: flex
-  // justify-content: center
   .articles
     gap: 10px
-    // max-width: 1200px
-    // display: flex
-    // flex-flow: row wrap
-    // justify-content: center
-
     .article
       display: flex
-      // max-width: 210px
       border-radius: 2px
-      // box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px
       padding: 10px
       transition: all .14s ease-in-out
       &:hover
@@ -658,8 +663,8 @@ export default {
 
 .container
   position: absolute
-  left: 50%
-  transform: translateX(-50%)
+  // left: 50%
+  // transform: translateX(-50%)
   display: flex
   flex-direction: column
   max-width: 950px !important
