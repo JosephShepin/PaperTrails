@@ -31,14 +31,22 @@
     </div>
     <!-- candidate results -->
     <div v-show="step == 3" class="shadow p-3 mb-5 bg-white rounded">
-      <h1>Candidate Results</h1>
+      <h1>Candidate Information</h1>
       <hr>
       <div class="dashboard">
         <div class="btn btn-primary" @click="getNews()">Get News</div>
+        <!-- donors -->
+        <!-- {{ donors }} -->
+        <div class="donor" v-for="(key, value) in donors" :key="key">
+        <p>${{ key.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} {{ value }}</p>
+
+        </div>
+        <!-- articles -->
+        <h2 style="text-align: center">Related Articles</h2>
+        <hr>
         <div class="articles-container" style="display: flex; justify-content: center">
           <div class="articles">
             <div v-for="article in newsResults" :key="article" class="article" @click="window.open(article.url, '_blank')">
-              <!-- {{ article }} -->
               <img :src="article.image" class="thumbnail"/>
               <div class="source"><b>{{ article.source }}</b></div>
               <div class="title">{{ article.title }}</div>
@@ -66,6 +74,7 @@ export default {
       candidateResults: {},
       selectedCandidate: {},
       newsResults: {},
+      donors: {},
     //   newsResults: [
     //     {
     //         "author": null,
@@ -200,7 +209,7 @@ export default {
     async selectCandidate(candidate, year){
       this.selectedCandidate = candidate
       console.log(process.env.VUE_APP_SERVER_URL)
-      const result = await fetch(`${process.env.VUE_APP_SERVER_URL}/candidate-data`,{
+      const response = await fetch(`${process.env.VUE_APP_SERVER_URL}/candidate-data`,{
         method: 'POST', 
         headers: {
           'Content-Type': 'application/json',
@@ -209,9 +218,12 @@ export default {
         },
         body: JSON.stringify(candidate)
       })
-      if (result.status == 200){
-        const response = await result.json()
-        console.log(response)
+      if (response.status == 200){
+        const result = await response.json()
+        console.log(result)
+        this.donors = result.donors
+
+
       }
       this.step+=1
     },
