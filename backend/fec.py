@@ -1,6 +1,8 @@
 import requests
 import re
 import os
+import pandas as pd 
+import plotly.express as px
 
 FEC_API_KEY = os.getenv("FEC_API_KEY")
 
@@ -62,10 +64,24 @@ def fetchContributionsByState(candidate_id, cycle):
     contributions = sorted(contributions, key=lambda x: x[1])
     return contributions
 
+def getContributionMap(contributions):
+    df = pd.DataFrame(contributions, columns = ['State', 'Contribution (USD)', 'full'])
+
+    fig = px.choropleth(df,
+                        locations='State', 
+                        locationmode="USA-states", 
+                        scope="usa",
+                        color='Contribution (USD)',
+                        color_continuous_scale="Viridis_r", 
+                        )
+    return fig.to_image(format="png")
+
+
 def fetchAllData(candidate_id, candidate_data, cycle):
     com = getCommittee(candidate_data, cycle)
     don = fetchDonors(com, cycle)
     con = fetchContributionsByState(candidate_id, cycle)
     fin = fetchFinancials(com, cycle)
-    return {'donors':don, 'contributors':con, 'financials':fin}
+    img = getContributionMap(con)
+    return {'donors':don, 'contributors':con, 'map':img, 'financials':fin}
 
