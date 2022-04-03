@@ -204,7 +204,7 @@
               <tbody>
                 <tr v-for="state in donors.contributors.reverse()" :key="state">
                   <td>{{ state[2] }}</td>
-                  <td>{{ addCommas(state[1]) }}</td>
+                  <td>${{ addCommas(state[1]) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -225,7 +225,7 @@
               >
                 <div class="">
                   <h2 style="margin-top: 15px; text-align: center">
-                    Campaign Donations By State
+                    Super PAC Ad Spending
                   </h2>
 
                   <Doughnut
@@ -238,20 +238,6 @@
                     height="200"
                   />
                 </div>
-                <!-- <div
-                  class=""
-                  style="
-                    width: 100%;
-                    background: white;
-                    height: 120px;
-                    position: absolute;
-                    top: 0;
-                  "
-                > -->
-                <!-- <h2 style="margin-top: 15px; text-align: center">
-                    Campaign Donations By State
-                  </h2> -->
-                <!-- </div> -->
               </div>
 
               <div class="table-wrapper" v-if="donors.super_pacs != null">
@@ -268,7 +254,7 @@
                       :key="name"
                     >
                       <td>{{ titleCase(name) }}</td>
-                      <td>{{ addCommas(total) }}</td>
+                      <td>${{ addCommas(total) }}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -397,9 +383,13 @@ export default {
         if (this.donors.donors.length > 20) {
           this.donors.donors.length = 20;
         }
+        let count = 0
         this.donors.donors.companies.forEach((x) => {
-          labels.push(x[0]);
-          data.push(x[1]);
+          if(count< 20){
+            labels.push(x[0]);
+            data.push(x[1]);
+          }
+          count++
         });
         return {
           labels: labels,
