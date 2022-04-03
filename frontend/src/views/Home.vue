@@ -81,17 +81,24 @@
       style="display: flex; padding: 10px; margin-top: -40px"
       v-show="step == 3"
     >
-      <div class="main-col" style="flex: 1">
+      <div class="main-col" style="flex: 1;">
         <div
           class="candidate-info shadow mb-2 p-3 bg-white rounded"
-          style="margin: 0"
+          style="margin: 0; display: flex; justify-content: space-between;"
         >
-          <br />
-          <h1 style="margin-top: -30px"><b>{{ titleCase(selectedCandidate.name) }}</b></h1>
+          <div>
+            <div style="display: flex">
+
+          <h1 style="margin-top: -30px;">
+            <b>{{ titleCase(selectedCandidate.name) }}</b>
+          </h1>
+          <div class="pill" :style="{ 'background': color}">
+             {{ selectedCandidate.party }}
+          </div>
+          </div>
           <p v-show="selectedCandidate.state != 'US'">
             <b>State:</b> {{ selectedCandidate.state }}
           </p>
-          <p><b>Party: </b>{{ titleCase(selectedCandidate.party_full) }}</p>
           <p>
             <b>Position Status:</b>
             {{ selectedCandidate.incumbent_challenge_full }}
@@ -119,19 +126,27 @@
                 v-show="loading"
                 class="spinner-border"
                 :class="{
-                  'text-primary': selectedCandidate.party_full.toLowerCase().includes('democrat'),
-                  'text-danger': selectedCandidate.party_full.toLowerCase().includes('republican'),
-               }"
+                  'text-primary': selectedCandidate.party_full
+                    .toLowerCase()
+                    .includes('democrat'),
+                  'text-danger': selectedCandidate.party_full
+                    .toLowerCase()
+                    .includes('republican'),
+                }"
                 role="status"
               ></div>
             </div>
           </div>
-          <p></p>
+          </div>
+          <div class="">
+            <img style="width: 200px;" src="https://bookstore.gpo.gov/sites/default/files/covers/052-071-01555-8.JPG"/>
+          </div>
         </div>
 
-                <div
+        <div
           v-if="donors.financials != null"
-          class="shadow p-3 mb-2 bg-white rounded" style="margin: 0"
+          class="shadow p-3 mb-2 bg-white rounded"
+          style="margin: 0"
         >
           <p class="amount" style="color: green">
             ${{ addCommas(donors.financials["Total Funds Raised"]) }}
@@ -152,27 +167,38 @@
             width="400"
             height="200"
           />
-          <h2 style="margin-bottom:-5px; margin-top: 10px; text-align: center;">Top Individual Donations By Employer</h2>
+          <h2 style="margin-bottom: -5px; margin-top: 10px; text-align: center">
+            Top Individual Donations By Employer
+          </h2>
         </div>
       </div>
       <div class="main-col" style="flex: 1">
         <div
-          style="margin-top: 5px; display: flex; flex-direction: column; align-items: center;"
-          class="shadow p-3 mb-5 bg-white rounded">
-          <div v-html="svgMap"></div>
-            <h2 style="margin-bottom:-5px; text-align: center;">Campaign Donations By State</h2>
-          </div>
-        <div
+          style="
+            margin-top: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          "
           class="shadow p-3 mb-5 bg-white rounded"
         >
+          <div v-html="svgMap"></div>
+          <h2 style="margin-bottom: -5px; text-align: center">
+            Campaign Donations By State
+          </h2>
+        </div>
+        <div class="shadow p-3 mb-5 bg-white rounded">
           <div class="donations">
-            <div v-for="{name, total} in this.donors.super_pacs" :key="name" class="donation">
-              <p>{{name}} {{total}}</p>
+            <div
+              v-for="{ name, total } in this.donors.super_pacs"
+              :key="name"
+              class="donation"
+            >
+              <p>{{ name }} {{ total }}</p>
             </div>
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -286,7 +312,7 @@ export default {
       selectedYear: 0,
       svgMap: "",
       candidateResults: {},
-      selectedCandidate: {},
+      selectedCandidate: { party: '', party_full: ''},
       articles: {},
       donors: {},
       focused: false,
@@ -544,4 +570,14 @@ export default {
 .tag
   font-size: 20px
   font-weight: bold
+
+.pill
+  color: white
+  font-weight: bold
+  text-align: center
+  border-radius: 20px
+  margin-top: -20px
+  margin-left: 15px
+  width: 60px
+  height: 26px
 </style>
