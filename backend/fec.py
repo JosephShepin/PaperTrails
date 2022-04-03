@@ -82,6 +82,7 @@ def getContributionMap(candidate_data, contributions):
                         color='Contribution (USD)',
                         color_continuous_scale=colors, 
                         )
+    fig.update_layout({'plot_bgcolor':'rgba(0,0,0,0)', 'paper_bgcolor':'rgba(0,0,0,0)'})
     return fig.to_image(format="svg")
 
 def getSuperPACDonations(candidate_id, cycle):
