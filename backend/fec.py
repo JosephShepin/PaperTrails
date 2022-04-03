@@ -3,6 +3,7 @@ import re
 import os
 import pandas as pd 
 import plotly.express as px
+from duckduckgo_images_api import search
 
 FEC_API_KEY = os.getenv("FEC_API_KEY")
 
@@ -90,6 +91,9 @@ def getSuperPACDonations(candidate_id, cycle):
         pacs.append( {'name':i['committee_name'], 'total':i['total']})
     return pacs
 
+def getImageUrl(candidate_data):
+    return search(candidate_data['name'])[0]['image']
+
 def fetchAllData(candidate_id, candidate_data, cycle):
     com = getCommittee(candidate_data, cycle)
     don = fetchDonors(com, cycle)
@@ -97,5 +101,6 @@ def fetchAllData(candidate_id, candidate_data, cycle):
     fin = fetchFinancials(com, cycle)
     img = getContributionMap(candidate_data, con)
     pac = getSuperPACDonations(candidate_id, cycle)
-    return {'donors':don, 'contributors':con, 'map':"".join(map(chr, img)), 'financials':fin, 'super_pacs':pac}
+    pic = getImageUrl(candidate_data)
+    return {'donors':don, 'contributors':con, 'map':"".join(map(chr, img)), 'financials':fin, 'super_pacs':pac, 'picture':pic}
 
