@@ -64,7 +64,14 @@ def fetchContributionsByState(candidate_id, cycle):
     contributions = sorted(contributions, key=lambda x: x[1])
     return contributions
 
-def getContributionMap(contributions):
+def getContributionMap(candidate_data, contributions):
+    party = candidate_data['party'].lower()
+    colors = px.colors.sequential.Greys
+    if re.compile('dem').search(party):
+        colors = px.colors.sequential.Blues
+    elif re.compile('rep').search(party):
+        colors = px.colors.sequential.Reds
+
     df = pd.DataFrame(contributions, columns = ['State', 'Contribution (USD)', 'full'])
 
     fig = px.choropleth(df,
@@ -72,7 +79,7 @@ def getContributionMap(contributions):
                         locationmode="USA-states", 
                         scope="usa",
                         color='Contribution (USD)',
-                        color_continuous_scale="Viridis_r", 
+                        color_continuous_scale=colors, 
                         )
     return fig.to_image(format="svg")
 
@@ -82,6 +89,6 @@ def fetchAllData(candidate_id, candidate_data, cycle):
     don = fetchDonors(com, cycle)
     con = fetchContributionsByState(candidate_id, cycle)
     fin = fetchFinancials(com, cycle)
-    img = getContributionMap(con)
+    img = getContributionMap(candidate_data, con)
     return {'donors':don, 'contributors':con, 'map':"".join(map(chr, img)), 'financials':fin}
 
