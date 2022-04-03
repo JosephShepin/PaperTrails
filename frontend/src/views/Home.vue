@@ -32,7 +32,7 @@
           :key="candidate"
           class="candidate"
         >
-          <p class="name">{{ candidate.name }}</p>
+          <p class="name">{{ titleCase(candidate.name) }}</p>
           <div class="party-container">
             <p
               class="party"
@@ -41,17 +41,18 @@
                 rep: candidate.party_full.toLowerCase().includes('republican'),
               }"
             >
-              {{ candidate.party_full }}
+              {{ titleCase(candidate.party_full) }}
             </p>
           </div>
           <p class="state">
             {{ candidate.state == "US" ? "" : "State: " + candidate.state }}
           </p>
           <p class="state">Office: {{ candidate.office_full }}</p>
+          <p>Select Another Year: </p>
           <div class="years-row">
             <div
               class="year"
-              @click="selectCandidate(candidate, year)"
+              @click="selectCandidate(year, candidate)"
               v-for="year in candidate.election_years"
               :key="year"
             >
@@ -70,17 +71,28 @@
       <h1>Candidate Information</h1>
       <hr />
       <div class="dashboard">
-        <div class="btn btn-primary" @click="getNews()">Get News</div>
         <div class="info-container">
-          <h4 style="margin-top: 20px; margin-bottom: -10px;">General Information</h4>
-          <hr>
           <br>
-          <p><b>Name: </b> {{ selectedCandidate.name }}</p>
-          <p><b>{{ selectedCandidate.state == "US" ? "" : "State: " + selectedCandidate.state }}</b></p>
-          <p><b>Party: </b>{{ selectedCandidate.party }}</p>
-          <p><b>Incumbent/Challenger:</b> {{ selectedCandidate.incumbent_challenge_full }}</p>
+          <p><b>Name: </b> {{ titleCase(selectedCandidate.name) }}</p>
+          <p><b>Selected Year: </b> {{ selectedYear }}</p>
+          <p v-show="selectedCandidate.state != 'US'"><b>{{ selectedCandidate.state }}</b></p>
+          <p><b>Party: </b>{{  titleCase(selectedCandidate.party_full) }}</p>
+          <p><b>Position Status:</b> {{ selectedCandidate.incumbent_challenge_full }}</p>
           <p><b>Office:</b> {{ selectedCandidate.office_full }}</p>
           <p><b>Political Activism Through:</b> {{ selectedCandidate.active_through }}</p>
+            <div v-if="selectedCandidate.election_years != null">
+            <p><b>Select Another Year</b></p>
+            <div class="years-row">
+              <div
+                class="year"
+                @click="selectCandidate(year)"
+                v-for="year in selectedCandidate.election_years.filter((x) => x != selectedYear)"
+                :key="year"
+              >
+                {{ year }}
+              </div>
+            </div>
+          </div>
           <p></p>
         </div>
         <br>
@@ -126,13 +138,14 @@
             left: -10px;
           "
         >
-          <div style="max-width: 980px; width: 100%; text-align: center">
-            <h2 style="font-size: 25px; margin-bottom: -10px">
+          <div class="related-articles">
+            <h2>
               Related Articles
             </h2>
             <hr />
           </div>
         </div>
+        <div class="btn btn-primary" @click="getNews()">Get News</div>
         <div class="articles-container">
           <div class="articles">
             <div
@@ -188,12 +201,13 @@ export default {
       const labels = [];
       const data = [];
       if (this.donors.contributors != null) {
-        console.log('ds')
-        console.log(this.donors.contributors)
-        for (const [key, value] of Object.entries(this.donors.contributors)) {
-          labels.push(key);
-          data.push(value[0]);
+        if (this.donors.contributors.length > 20){
+          this.donors.contributors.length = 20;
         }
+        this.donors.contributors.reverse().forEach((x) => {
+          labels.push(x[0]);
+          data.push(x[1]);
+        })
         return {
           labels: labels,
           datasets: [
@@ -215,10 +229,13 @@ export default {
       const labels = [];
       const data = [];
       if (this.donors.donors != null) {
-        for (const [key, value] of Object.entries(this.donors.donors.companies)) {
-          labels.push(key);
-          data.push(value);
+        if (this.donors.donors.length > 20){
+          this.donors.donors.length = 20;
         }
+        this.donors.donors.companies.splice(0,30).forEach((x) => {
+          labels.push(x[0]);
+          data.push(x[1]);
+        })
         return {
           labels: labels,
           datasets: [
@@ -243,6 +260,7 @@ export default {
       inputName: "Joseph Biden",
       candidateResults: {},
       selectedCandidate: {},
+      selectedYear: 0, 
       newsResults: {},
       donors: {},
       chartOptions: {
@@ -256,6 +274,12 @@ export default {
     };
   },
   methods: {
+    titleCase(value){
+      if (value == null || value == undefined){
+        return '';
+      }
+      return value.toLowerCase().replace(/(?:^|\s|-)\S/g, x => x.toUpperCase());
+    },
     openArticle(url) {
       window.open(url, "_blank");
     },
@@ -275,19 +299,26 @@ export default {
           .slice(0, 8);
       }
     },
-    async selectCandidate(candidate, year) {
-      this.selectedCandidate = candidate;
+    async selectCandidate(year, candidate) {
+      console.log('selecting candidate');
+
+      if(candidate != null){
+        console.log('setting new candidate')
+        this.selectedCandidate = candidate;
+      }
+      this.selectedYear = year;
       console.log(process.env.VUE_APP_SERVER_URL);
+      console.log('fetching data...')
       const response = await fetch(
         `${process.env.VUE_APP_SERVER_URL}/candidate-data`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            candidateid: candidate.candidate_id,
+            candidateid: this.selectedCandidate.candidate_id,
             year: year,
           },
-          body: JSON.stringify(candidate),
+          body: JSON.stringify(this.selectedCandidate),
         }
       );
       if (response.status == 200) {
@@ -314,21 +345,30 @@ export default {
 </script>
 
 <style lang="sass" scoped>
+
+.related-articles 
+  max-width: 980px
+  width: 100%
+  text-align: center
+  h2 
+    font-size: 25px
+    margin-bottom: -10px
 .info-container
   p
     margin-top: -10px
 .bar-charts-container
   display: flex
   justify-content: center
-  .bar-charts
-    display: flex
-    gap: 10px
-    max-width: 1500px
-    .chart
-      .title
-        text-align: center
-        font-size: 20px
-        margin-bottom: -10px
+.bar-charts
+  display: flex
+  gap: 10px
+  max-width: 1500px
+  width: 100%
+  .chart
+    .title
+      text-align: center
+      font-size: 20px
+      margin-bottom: -10px
 .articles-container 
   display: flex
   justify-content: center
@@ -389,21 +429,22 @@ export default {
         color: #CB4335
       .party
         margin-top: -15px
-    .years-row
-      display: flex
-      gap: 8px
-      margin-top: -5px
-      .year
-        transition: .1s all ease-in-out
-        padding: 4px 4px 2px 4px
-        border-radius: 3px
-        border: 1px solid black
-        &:hover
-          background: #34495E
-          color: white
     .years
       font-size: 20px
       margin-top: -10px
     .state
       margin-top: -10px
+
+.years-row
+  display: flex
+  gap: 8px
+  margin-top: -5px
+  .year
+    transition: .1s all ease-in-out
+    padding: 4px 4px 2px 4px
+    border-radius: 3px
+    border: 1px solid black
+    &:hover
+      background: #34495E
+      color: white
 </style>
