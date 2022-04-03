@@ -267,8 +267,8 @@
                       v-for="{ name, total } in this.donors.super_pacs"
                       :key="name"
                     >
-                      <td>{{ name }}</td>
-                      <td>{{ total }}</td>
+                      <td>{{ titleCase(name) }}</td>
+                      <td>{{ addCommas(total) }}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -314,7 +314,7 @@ export default {
     chartData() {
       const labels = [];
       const data = [];
-
+      const colors = ["#5668e2", "#8a56e2", "#cf56e2", "#e256ae", "#e25668", "#e28956", "#e2cf56", "#aee256", "#68e256", "##56e289", "#56e2cf", "#56aee2", "#5668e2", "#5668e2", "#8a56e2", "#cf56e2"]
       if (this.donors.super_pacs != null) {
         if (this.donors.super_pacs.length > 12) {
           this.donors.super_pacs.length = 12;
@@ -323,11 +323,12 @@ export default {
           labels.push(name);
           data.push(total);
         });
+        colors.length = labels.length
         return {
           labels: labels,
           datasets: [
             {
-              backgroundColor: ["#41B883", "#E46651", "#00D8FF", "#DD1B16"],
+              backgroundColor: colors,
               data: data,
             },
           ],
