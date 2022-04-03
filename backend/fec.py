@@ -21,26 +21,29 @@ def getCommittee(candidate_data, cycle):
 
 def fetchDonors(committee_id, cycle):
   r = requestFEC('schedules/schedule_a/by_employer/', {'sort':'-total', 'committee_id':committee_id, 'cycle':str(cycle), 'per_page':'100'})
-  donors = {'Unemployed':0, 'Self Employed':0}
+  companies = {}
+  individuals = 0
   unemployed_re = re.compile('unemployed|not employed|information requested|none')
   self_re = re.compile('self')
   for donor in r.json()['results']:
     if not donor['employer']:
-      donors['Unemployed'] += donor['total']
+      individuals += donor['total']
       continue
-
     donor_str = donor['employer'].lower()
     if unemployed_re.search(donor_str):
-      donors['Unemployed'] += donor['total']
+      individuals += donor['total']
     elif self_re.search(donor_str):
-      donors['Self Employed'] += donor['total']
+      individuals += donor['total']
     else:
-      donors[donor_str.title()] = donor['total']
-  for k,v in donors.items():
-    donors[k] = round(v,2)
-  return donors
+      companies[donor_str.title()] = donor['total']
+  return {'individuals':round(individuals, 2)}, {'companies':companies}
+
+def fetchMoneyRaised(committee_id, cycle):
+    r = requestFEC('committee/' + committee_id + '/totals/', {'cycle':str(cycle)})
+    return r.json()['results'][0]['receipts']
 
 def fetchAllData(candidate_data, cycle):
     com = getCommittee(candidate_data, cycle)
     don = fetchDonors(com, cycle)
     return {'donors':don}
+    
