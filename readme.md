@@ -1,6 +1,6 @@
-# {Name}
+# Paper Trails
 ### Iyad, Joey, Mark
-{Name} opens up the political backings of **all** federal candidates including Representitves, Senators, and Presidents. This website compiles big data from the government into **easily** and **friendly** digestable information.
+Paper Trails opens up the political backings of **all** federal candidates including Representitves, Senators, and Presidents. This website compiles big data from the government into **easily** and **friendly** digestable information.
 
 This project was coded in 24 hours for [SHS Hacks 2022](https://shshacks.io/). The code can be found [here](https://github.com/JosephShepin/shs-hacks-2022) on [GitHub](https://github.com/).
 
