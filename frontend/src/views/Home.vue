@@ -134,10 +134,9 @@
             </div>
           </div>
           <div class="">
-            <img
-              style="width: 200px"
-              src="https://bookstore.gpo.gov/sites/default/files/covers/052-071-01555-8.JPG"
-            />
+            <div v-if="donors.picture != null">
+              <img style="width: 200px" :src="donors.picture" />
+            </div>
           </div>
         </div>
 
