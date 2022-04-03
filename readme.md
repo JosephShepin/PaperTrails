@@ -18,6 +18,8 @@ This project was coded in 24 hours for [SHS Hacks 2022](https://shshacks.io/). T
 - [DuckDuckGo Image API](https://github.com/deepanprabhu/duckduckgo-images-api)
 - [Flask](https://flask.palletsprojects.com/en/2.1.x/)
 - [Chart.js](https://www.chartjs.org/)
+- [Flask-Cors](https://pypi.org/project/Flask-Cors/)
+- [python-dotenv](https://pypi.org/project/python-dotenv/)
 
 ## __*The advancement and diffusion of knowledge…is the only guardian of true liberty.*__
 <div style="text-align: right"><em><h2>James Madison</h2></em></div>
