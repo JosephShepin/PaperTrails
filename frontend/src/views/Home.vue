@@ -5,10 +5,12 @@
       v-show="step == 1"
       :class="{ center: step == 1 }"
       class="container shadow p-3 mb-5 bg-white rounded"
+      :style="{ 'border': focused ? '1px solid #2C3E50': 'none'}"
     >
       <h1>Welcome to Lorem Ipsum</h1>
       <br />
       <input
+        @focus="focused = true"
         class="form-control"
         v-model="inputName"
         placeholder="Enter Candidate Name"
@@ -31,6 +33,10 @@
           v-for="candidate in candidateResults"
           :key="candidate"
           class="candidate"
+          :class="{
+            dem: candidate.party_full.toLowerCase().includes('democrat'),
+            rep: candidate.party_full.toLowerCase().includes('republican'),
+          }"
         >
           <p class="name">{{ titleCase(candidate.name) }}</p>
           <div class="party-container">
@@ -163,7 +169,7 @@
         <div class="articles-container">
           <div class="articles">
             <div
-              v-for="article in newsResults"
+              v-for="article in articles"
               :key="article"
               class="article"
               @click="openArticle(article.url)"
@@ -173,7 +179,7 @@
                 <b>{{ article.source }}</b>
               </div> -->
               <!-- {{ article }} -->
-              <div class="title">{{ article.title }}</div>
+              <div class="title">{{ formatTitle(article.title) }}</div>
               <div class="author">{{ article.author }}</div>
               <br />
             </div>
@@ -211,6 +217,17 @@ export default {
     Bar,
   },
   computed: {
+    color(){
+      if(this.selectedCandidate != undefined && this.selectedCandidate != null){
+        if(this.selectedCandidate.party_full.toLowerCase().includes('republican')){
+          return "#CB4335"
+        }
+        if(this.selectedCandidate.party_full.toLowerCase().includes('democrat')){
+          return "#2E86C1"
+        }
+      }
+      return "green"
+    },
     stateChartData() {
       const labels = [];
       const data = [];
@@ -227,7 +244,7 @@ export default {
           datasets: [
             {
               label: "Money Donated (USD)",
-              backgroundColor: "#2874A6",
+              backgroundColor: this.color,
               data: data,
             },
           ],
@@ -255,7 +272,7 @@ export default {
           datasets: [
             {
               label: "Money Donated (USD)",
-              backgroundColor: "#2874A6",
+              backgroundColor: this.color,
               data: data,
             },
           ],
@@ -275,8 +292,9 @@ export default {
       candidateResults: {},
       selectedCandidate: {},
       selectedYear: 0, 
-      newsResults: {},
+      articles: {},
       donors: {},
+      focused: false,
       loading: true,
       chartOptions: {
         responsive: true,
@@ -289,6 +307,15 @@ export default {
     };
   },
   methods: {
+    formatTitle(title) {
+      if(title != null){
+        if(title.length > 80){
+          return title.substring(0,80) + '...'
+        }
+        return title
+      }
+      return '';
+    },
     titleCase(value){
       if (value == null || value == undefined){
         return '';
@@ -305,11 +332,11 @@ export default {
         }&keywords=${this.selectedCandidate.name.replaceAll(
           ",",
           ""
-        )}&sort=published_desc&countries=us&languages=en&sources=cnn&limit=15`
+        )}&sort=published_desc&countries=us&languages=en&sources=cnn,fox,bbc&limit=15`
       );
       if (results.status == 200) {
         const data = await results.json();
-        this.newsResults = data.data
+        this.articles = data.data
           .filter((article) => article.image != null)
           .slice(0, 8);
       }
@@ -371,10 +398,11 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;500;600&family=Space+Mono&display=swap');
 
 .home
+  margin-top: 100px
   font-family: 'League Spartan', sans-serif
   font-size: 20px
 .related-articles 
-  max-width: 980px
+  max-width: 1180px
   width: 100%
   text-align: center
   h2 
@@ -401,19 +429,29 @@ export default {
   display: flex
   justify-content: center
   .articles
-    max-width: 1000px
+    gap: 10px
+    max-width: 1200px
     display: flex
     flex-flow: row wrap
-    justify-content: flex-start
+    justify-content: center
     .article
-      max-width: 200px
+      max-width: 210px
+      border-radius: 8px
+      box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px
+      padding: 10px
+      transition: all .14s ease-in-out
+      &:hover
+        transform: scale(1.02)
+      .title
+        font-size: 17px
+        line-height: 20px
       .source
         font-size: 15px
         padding-top: 10px
 
 .thumbnail
-  width: 180px
-  height: 100px
+  width: 190px
+  height: 120px
   object-fit: cover
   border-radius: 5px
   margin-bottom: 10px
@@ -442,11 +480,15 @@ export default {
   flex-direction: column
   justify-content: flex-start !important
   .candidate
-    transition: .2s all ease-in-out
+    transition: .1s all ease-in-out
     border-radius: 10px
-    padding: 5px 0 5px 10px
-    &:hover
-      background: #F2F4F4
+    padding: 5px 0 10px 10px
+    &.dem
+      &:hover
+        background: rgba(46, 134, 193, .1)
+    &.rep
+      &:hover
+        background: rgba(203, 67, 53, .08)
     .name
       font-size: 30px
     .party-container
@@ -484,4 +526,5 @@ export default {
 .tag
   font-size: 20px
   font-weight: bold
+
 </style>
