@@ -135,7 +135,14 @@
           </div>
           <div class="">
             <div v-if="donors.picture != null">
-              <img style="width: 200px" :src="donors.picture" />
+              <img
+                style="
+                  width: 200px;
+                  border-radius: 3px;
+                  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+                "
+                :src="donors.picture"
+              />
             </div>
           </div>
         </div>
@@ -204,13 +211,68 @@
           </div>
         </div>
         <div class="shadow p-3 mb-5 bg-white rounded">
-          <div class="donations">
-            <div
-              v-for="{ name, total } in this.donors.super_pacs"
-              :key="name"
-              class="donation"
-            >
-              <p>{{ name }} {{ total }}</p>
+          <div class="spending">
+            <div class="">
+              <div
+                class=""
+                style="
+                  display: flex;
+                  justify-content: center;
+                  width: 100%;
+                  position: relative;
+                  overflow: hidden;
+                "
+              >
+                <div class="">
+                  <h2 style="margin-top: 15px; text-align: center">
+                    Campaign Donations By State
+                  </h2>
+
+                  <Doughnut
+                    style="max-width: 600px; width: 100%"
+                    :chart-data="chartData"
+                    chart-id="spending-chart"
+                    dataset-id-key="label"
+                    :cssClasses="{}"
+                    width="200"
+                    height="200"
+                  />
+                </div>
+                <!-- <div
+                  class=""
+                  style="
+                    width: 100%;
+                    background: white;
+                    height: 120px;
+                    position: absolute;
+                    top: 0;
+                  "
+                > -->
+                <!-- <h2 style="margin-top: 15px; text-align: center">
+                    Campaign Donations By State
+                  </h2> -->
+                <!-- </div> -->
+              </div>
+
+              <div class="table-wrapper" v-if="donors.super_pacs != null">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">PAC</th>
+                      <th scope="col">Amount (USD)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="{ name, total } in this.donors.super_pacs"
+                      :key="name"
+                    >
+                      <td>{{ name }}</td>
+                      <td>{{ total }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -220,7 +282,7 @@
 </template>
 
 <script>
-import { Bar } from "vue-chartjs";
+import { Bar, Doughnut } from "vue-chartjs";
 import {
   Chart as ChartJS,
   Title,
@@ -229,6 +291,7 @@ import {
   BarElement,
   CategoryScale,
   LinearScale,
+  ArcElement,
 } from "chart.js";
 
 ChartJS.register(
@@ -237,15 +300,49 @@ ChartJS.register(
   Legend,
   BarElement,
   CategoryScale,
-  LinearScale
+  LinearScale,
+  ArcElement
 );
 
 export default {
   name: "Home",
   components: {
     Bar,
+    Doughnut,
   },
   computed: {
+    chartData() {
+      const labels = [];
+      const data = [];
+
+      if (this.donors.super_pacs != null) {
+        if (this.donors.super_pacs.length > 12) {
+          this.donors.super_pacs.length = 12;
+        }
+        this.donors.super_pacs.forEach(({ name, total }) => {
+          labels.push(name);
+          data.push(total);
+        });
+        return {
+          labels: labels,
+          datasets: [
+            {
+              backgroundColor: ["#41B883", "#E46651", "#00D8FF", "#DD1B16"],
+              data: data,
+            },
+          ],
+        };
+      }
+      return {
+        labels: [],
+        datasets: [
+          {
+            backgroundColor: [],
+            data: [],
+          },
+        ],
+      };
+    },
     color() {
       if (
         this.selectedCandidate != undefined &&
@@ -299,7 +396,7 @@ export default {
         if (this.donors.donors.length > 20) {
           this.donors.donors.length = 20;
         }
-        this.donors.donors.companies.splice(0, 30).forEach((x) => {
+        this.donors.donors.companies.forEach((x) => {
           labels.push(x[0]);
           data.push(x[1]);
         });
@@ -601,4 +698,9 @@ export default {
   width: 100%
   height: 200px !important
   overflow: auto
+
+.spending
+  // display: flex
+  // flex-direction: column
+  // align-items: center
 </style>
