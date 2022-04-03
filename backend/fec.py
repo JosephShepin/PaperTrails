@@ -36,7 +36,7 @@ def fetchDonors(committee_id, cycle):
       individuals += donor['total']
     else:
       companies[donor_str.title()] = donor['total']
-  return {{'individuals':round(individuals, 2)}, {'companies':companies}}
+  return {'individuals':round(individuals, 2), 'companies':companies}
 
 def fetchMoneyRaised(committee_id, cycle):
     r = requestFEC('committee/' + committee_id + '/totals/', {'cycle':str(cycle)})
