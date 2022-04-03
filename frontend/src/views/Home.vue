@@ -4,8 +4,9 @@
     <div
       v-show="step == 1"
       :class="{ center: step == 1 }"
+      style="margin-top: 0px; border-radius: 10px !important;"
       class="container shadow p-3 mb-5 bg-white rounded"
-      :style="{ 'border': focused ? '1px solid #2C3E50': 'none'}"
+      :style="{ 'border': focused ? '1px solid #808B96': 'none'}"
     >
       <h1>Welcome to Lorem Ipsum</h1>
       <br />
@@ -398,7 +399,7 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;500;600&family=Space+Mono&display=swap');
 
 .home
-  margin-top: 100px
+  margin-top: 50px
   font-family: 'League Spartan', sans-serif
   font-size: 20px
 .related-articles 
