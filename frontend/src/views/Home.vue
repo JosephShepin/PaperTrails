@@ -85,12 +85,11 @@
         </div>
         <br>
         <!-- donors -->
+        <h2 style="text-align: center;">Financial Donors</h2>
         <div class="bar-charts-container">
-          <h4>Financial Donors</h4>
-          <hr>
           <div class="bar-charts">
             <div class="chart"  style="flex: 1">
-              <p style="text-align: center; font-size: 20px; margin-bottom: -10px">Top Corporate Donors</p>
+              <p class="title">Top Corporate Donors</p>
               <Bar
                 class="shadow-sm p-3 mb-5 bg-white rounded"
                 style="width: 100%; height: 400px;"
@@ -102,10 +101,19 @@
                 height="200"
               />
             </div>
-            <div class="chart" style="flex: 1">
-              <p>hello world</p>
+            <div class="chart"  style="flex: 1">
+              <p class="title">Total Donors By State</p>
+              <Bar
+                class="shadow-sm p-3 mb-5 bg-white rounded"
+                style="width: 100%; height: 400px;"
+                :chart-options="chartOptions"
+                :chart-data="stateChartData"
+                chart-id="companies-chart"
+                dataset-id-key="label"
+                width="400"
+                height="200"
+              />
             </div>
-
           </div>
         </div>
 
@@ -125,10 +133,7 @@
             <hr />
           </div>
         </div>
-        <div
-          class="articles-container"
-          style="display: flex; justify-content: center"
-        >
+        <div class="articles-container">
           <div class="articles">
             <div
               v-for="article in newsResults"
@@ -179,11 +184,38 @@ export default {
     Bar,
   },
   computed: {
+    stateChartData() {
+      const labels = [];
+      const data = [];
+      if (this.donors.contributors != null) {
+        console.log('ds')
+        console.log(this.donors.contributors)
+        for (const [key, value] of Object.entries(this.donors.contributors)) {
+          labels.push(key);
+          data.push(value[0]);
+        }
+        return {
+          labels: labels,
+          datasets: [
+            {
+              label: "Money Donated (USD)",
+              backgroundColor: "#2874A6",
+              data: data,
+            },
+          ],
+        };
+      } else {
+        return {
+          labels: [],
+          datasets: [{ data: [] }],
+        };
+      }
+    },
     donorChartData() {
       const labels = [];
       const data = [];
-      if (this.donors.companies != null) {
-        for (const [key, value] of Object.entries(this.donors.companies)) {
+      if (this.donors.donors != null) {
+        for (const [key, value] of Object.entries(this.donors.donors.companies)) {
           labels.push(key);
           data.push(value);
         }
@@ -261,7 +293,8 @@ export default {
       if (response.status == 200) {
         const result = await response.json();
         console.log(result);
-        this.donors = result.donors;
+        
+        this.donors = result;
       }
       this.step += 1;
     },
@@ -284,19 +317,31 @@ export default {
 .info-container
   p
     margin-top: -10px
-.bar-charts
+.bar-charts-container
   display: flex
-  max-width: 1500px
-.articles
-  max-width: 1000px
+  justify-content: center
+  .bar-charts
+    display: flex
+    gap: 10px
+    max-width: 1500px
+    .chart
+      .title
+        text-align: center
+        font-size: 20px
+        margin-bottom: -10px
+.articles-container 
   display: flex
-  flex-flow: row wrap
-  justify-content: flex-start
-  .article
-    max-width: 200px
-    .source
-      font-size: 15px
-      padding-top: 10px
+  justify-content: center
+  .articles
+    max-width: 1000px
+    display: flex
+    flex-flow: row wrap
+    justify-content: flex-start
+    .article
+      max-width: 200px
+      .source
+        font-size: 15px
+        padding-top: 10px
 
 .thumbnail
   width: 180px
