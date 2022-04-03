@@ -55,9 +55,10 @@ def fetchMoneyRaised(committee_id, cycle):
 
 def fetchContributionsByState(candidate_id, cycle):
     r = requestFEC('schedules/schedule_a/by_state/by_candidate', {'candidate_id':candidate_id, 'cycle':str(cycle), 'per_page':'100'})
-    contributions = {}
+    contributions = []
     for state in r.json()['results']:
-        contributions[state['state']] = [state['total'], state['state_full']]
+        contributions.append([state['state'], state['total'], state['state_full']])
+    sorted(contributions, key=lambda x: x[1])
     return contributions
 
 def fetchAllData(candidate_id, candidate_data, cycle):
