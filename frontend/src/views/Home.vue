@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home" :style="{ width: true ? '1600px' : '100%' }">
     <!-- candidate search -->
     <div
       v-show="step == 1"
@@ -8,7 +8,8 @@
       class="container shadow p-3 mb-5 bg-white rounded"
       :style="{ border: focused ? '1px solid #28B463' : 'none' }"
     >
-      <h1>Welcome to <span style="color: #28B463">Paper Trails</span></h1>
+      <h1>Welcome to <span style="color: #28b463">Paper Trails</span></h1>
+      <p>Enter the Name of a Candidate Below</p>
       <br />
       <input
         @focus="focused = true"
@@ -20,7 +21,7 @@
       <button
         :disabled="inputName.length <= 5"
         class="btn btn-success"
-        style="background-color: #28B463" 
+        style="background-color: #28b463"
         @click="searchCandidates()"
       >
         Search Candidates
@@ -89,20 +90,20 @@
         >
           <div>
             <div style="display: flex">
-              <h1 style="margin-top: -30px;">
+              <h1 style="margin-top: 0px">
                 <b>{{ titleCase(selectedCandidate.name) }}</b>
               </h1>
-              <div class="pill" :style="{ background: color }">
+              <div class="pill" style="margin-top: 7px" :style="{ background: color }">
                 {{ selectedCandidate.party }}
               </div>
             </div>
             <p v-show="selectedCandidate.state != 'US'">
               <b>State:</b> {{ selectedCandidate.state }}
             </p>
-            <p>
+            <!-- <p>
               <b>Position Status:</b>
               {{ selectedCandidate.incumbent_challenge_full }}
-            </p>
+            </p> -->
             <p><b>Office:</b> {{ selectedCandidate.office_full }}</p>
             <p><b>Selected Year: </b> {{ selectedYear }}</p>
             <div v-if="selectedCandidate.election_years != null">
@@ -134,13 +135,23 @@
               </div>
             </div>
           </div>
-          <div class="">
-                          <div class="btn btn-outline-secondary" @click="reset()">Search New Candidate</div>
+          <div class="" style='display: flex; flex-direction: column; align-items: flex-end'>
+            <div class="" style="display: flex">
+            <div class="btn btn-outline-secondary" @click="reset()" >
+              Search New
+            </div>
+            <br>
+            <div class="btn btn-outline-success " style="margin-left: 5px" @click="$emit('new')">
+              Compare
+            </div>
+            </div>
 
             <div v-if="donors.picture != null">
               <img
                 style="
                   width: 200px;
+                  height: 270px;
+                  object-fit: cover;
                   border-radius: 3px;
                   margin-top: 10px;
                   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
@@ -187,7 +198,7 @@
               <hr />
             </div>
           </div>
-          <div class="btn btn-primary" @click="getNews()">Get News</div>
+          <!-- <div class="btn btn-primary" @click="getNews()">Get News</div> -->
           <div class="articles-container">
             <div class="articles">
               <div
@@ -334,6 +345,7 @@ export default {
     Bar,
     Doughnut,
   },
+
   computed: {
     chartData() {
       const labels = [];
@@ -407,10 +419,13 @@ export default {
       const labels = [];
       const data = [];
       if (this.donors.contributors != null) {
-        if (this.donors.contributors.length > 20) {
-          this.donors.contributors.length = 20;
-        }
-        this.donors.contributors.reverse().forEach((x) => {
+        // if (this.donors.contributors.length > 20) {
+        //   this.donors.contributors.length = 20;
+        // }
+        // if(this.donors.contributors[0][1] < this.donors.contributors[1][1]){
+        //   this.donors.contributors = this.donors.contributors.reverse()
+        // }
+        this.donors.contributors.forEach((x) => {
           labels.push(x[0]);
           data.push(x[1]);
         });
@@ -464,9 +479,14 @@ export default {
       }
     },
   },
+  props: {
+    smaller:{
+      type: Boolean
+    }
+  },
   data() {
     return {
-      inputName: "Joseph Biden",
+      inputName: "",
       step: 1,
       selectedYear: 0,
       svgMap: "",
@@ -487,16 +507,14 @@ export default {
     };
   },
   methods: {
-    reset(){
-      this.selectedYear= 0
-       this.svgMap= ""
-       this.candidateResults= {}
-       this.selectedCandidate= { party: "", party_full: "" }
-       this.articles= {}
-       this.donors= {}
-       this.focused= false,
-       this.loading= false,
-      this.step = 1
+    reset() {
+      this.selectedYear = 0;
+      this.svgMap = "";
+      this.candidateResults = {};
+      this.selectedCandidate = { party: "", party_full: "" };
+      this.articles = {};
+      this.donors = {};
+      (this.focused = false), (this.loading = false), (this.step = 1);
     },
     convertDate(dateStr) {
       const date = new Date(dateStr);
@@ -575,6 +593,7 @@ export default {
       }
       if (this.step == 2) {
         this.step += 1;
+        this.getNews()
       }
     },
 
@@ -662,9 +681,10 @@ export default {
         font-size: 20px
 
 .container
-  position: absolute
+  // position: absolute
   // left: 50%
   // transform: translateX(-50%)
+  min-width: 700px
   display: flex
   flex-direction: column
   max-width: 950px !important
