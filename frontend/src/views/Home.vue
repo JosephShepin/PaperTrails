@@ -71,12 +71,9 @@
       </div>
     </div>
 
-    <h1 v-show="step == 3" style="padding-left: 10px; margin-top: -20px">
-      Candidate Information
-    </h1>
     <div
       class="main-row"
-      style="display: flex; padding: 10px; margin-top: -10px"
+      style="display: flex; padding: 10px; margin-top: -40px"
       v-show="step == 3"
     >
       <div class="main-col" style="flex: 1">
@@ -85,7 +82,7 @@
           style="margin: 0"
         >
           <br />
-          <p><b>Name: </b> {{ titleCase(selectedCandidate.name) }}</p>
+          <h1 style="margin-top: -30px"><b>{{ titleCase(selectedCandidate.name) }}</b></h1>
           <p v-show="selectedCandidate.state != 'US'">
             <b>State:</b> {{ selectedCandidate.state }}
           </p>
@@ -122,24 +119,25 @@
           </div>
           <p></p>
         </div>
-
-        <Bar
-          class="shadow p-3 mb-5 bg-white rounded"
-          style="margin: 0"
-          :chart-options="chartOptions"
-          :chart-data="donorChartData"
-          chart-id="companies-chart"
-          dataset-id-key="label"
-          width="400"
-          height="200"
-        />
+        <div class="shadow p-3 mb-5 bg-white rounded" style="margin: 0">
+          <Bar
+            :chart-options="chartOptions"
+            :chart-data="donorChartData"
+            chart-id="companies-chart"
+            dataset-id-key="label"
+            width="400"
+            height="200"
+          />
+          <h2 style="margin-bottom:-5px; margin-top: 10px; text-align: center;">Top Individual Donations By Employer</h2>
+        </div>
       </div>
       <div class="main-col" style="flex: 1">
         <div
           style="margin-top: 5px"
-          class="shadow p-3 mb-5 bg-white rounded"
-          v-html="svgMap"
-        ></div>
+          class="shadow p-3 mb-5 bg-white rounded">
+          <div v-html="svgMap"></div>
+            <h2 style="margin-bottom:-5px; text-align: center;">Campaign Donations By State</h2>
+          </div>
         <div
           v-if="donors.financials != null"
           class="shadow p-3 mb-5 bg-white rounded"
@@ -151,9 +149,19 @@
           <p class="amount" style="color: red">
             ${{ addCommas(donors.financials["Total Expenditures"]) }}
           </p>
-          <p class="tag">Total Expenditure</p>
+          <p class="tag" style="margin-bottom: -5px">Total Expenditure</p>
+        </div>
+        <div
+          class="shadow p-3 mb-5 bg-white rounded"
+        >
+          <div class="donations">
+            <div v-for="{name, total} in this.donors.super_pacs" :key="name" class="donation">
+              <p>{{name}} {{total}}</p>
+            </div>
+          </div>
         </div>
       </div>
+
     </div>
   </div>
 </template>
